@@ -5,6 +5,7 @@ import 'package:smart_food_frontend/providers/auth_provider.dart';
 import 'package:smart_food_frontend/presentation/routes/app_routes.dart';
 import 'package:smart_food_frontend/presentation/widgets/item_profile.dart'
     as item_profile;
+import 'package:smart_food_frontend/providers/store_provider.dart';
 import 'package:smart_food_frontend/providers/user_provider.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -50,9 +51,7 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   textAlign: TextAlign.center,
                 ),
-
                 const SizedBox(height: 26),
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -77,10 +76,9 @@ class ProfileScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-
                     ElevatedButton(
                       onPressed: () {
-                        _logout(context); 
+                        _logout(context);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFFB6D3A),
@@ -138,11 +136,11 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 33,
-                  backgroundImage:
-                      (user?.avatar != null && user!.avatar!.isNotEmpty)
-                          ? NetworkImage(user.avatar!)
-                          : const AssetImage("assets/images/default_avatar.png")
-                              as ImageProvider,
+                  backgroundImage: (user?.avatar != null &&
+                          user!.avatar!.isNotEmpty)
+                      ? NetworkImage(user.avatar!)
+                      : const AssetImage("./assets/images/default_avatar.png")
+                          as ImageProvider,
                 ),
                 const SizedBox(width: 15),
                 Column(
@@ -197,15 +195,40 @@ class ProfileScreen extends StatelessWidget {
                       iconColor: Color(0xFF36C12C),
                     ),
                   ),
-                  const item_profile.MenuItemWidget(
-                    label: "Thanh toán",
-                    icon: Icons.payment_outlined,
-                    iconColor: Color(0xFFFCAE41),
+                  InkWell(
+                    onTap: () =>
+                        Navigator.pushNamed(context, AppRoutes.payment),
+                    child: const item_profile.MenuItemWidget(
+                      label: "Phương thức thanh toán",
+                      icon: Icons.payment_outlined,
+                      iconColor: Color(0xFFFCAE41),
+                    ),
                   ),
-                  const item_profile.MenuItemWidget(
-                    label: "Pushan cho doanh nghiệp",
-                    icon: Icons.storefront_outlined,
-                    iconColor: Color(0xFFFB4A59),
+                  InkWell(
+                    onTap: () async {
+                      final storeProvider =
+                          Provider.of<StoreProvider>(context, listen: false);
+
+                      await storeProvider.loadStores();
+
+                      if (storeProvider.stores.isEmpty) {
+                        // ignore: use_build_context_synchronously
+                        Navigator.pushNamed(context, AppRoutes.merchantStart);
+                      } else {
+                        final store = storeProvider.stores.first;
+
+                        if (store.status == 1) {
+                          // ignore: use_build_context_synchronously
+                          Navigator.pushNamed(
+                              context, AppRoutes.merchantPending);
+                        } 
+                      }
+                    },
+                    child: const item_profile.MenuItemWidget(
+                      label: "Pushan cho doanh nghiệp",
+                      icon: Icons.storefront_outlined,
+                      iconColor: Color(0xFFFB4A59),
+                    ),
                   ),
                   const item_profile.MenuItemWidget(
                     label: "Pushan cho tài xế",
@@ -217,10 +240,14 @@ class ProfileScreen extends StatelessWidget {
                     icon: Icons.support_agent_outlined,
                     iconColor: Color(0xFF386642),
                   ),
-                  const item_profile.MenuItemWidget(
-                    label: "Trung tâm trợ giúp",
-                    icon: Icons.help_center_outlined,
-                    iconColor: Color(0xFF369BFF),
+                  InkWell(
+                    onTap: () =>
+                        Navigator.pushNamed(context, AppRoutes.helpCenter),
+                    child: const item_profile.MenuItemWidget(
+                      label: "Trung tâm trợ giúp",
+                      icon: Icons.help_outline,
+                      iconColor: Color(0xFF3A86FF),
+                    ),
                   ),
                   InkWell(
                     onTap: () => _showLogoutConfirm(context),

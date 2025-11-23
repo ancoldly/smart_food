@@ -32,29 +32,14 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
 
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final success = await authProvider.login(email, password);
+
+    final success = await authProvider.login(context, email, password);
 
     setState(() => _isLoading = false);
 
     if (!mounted) return;
 
-    if (success) {
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Đăng nhập thành công!")),
-      );
-
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
-      if (context.mounted) {
-        Navigator.pushReplacementNamed(context, AppRoutes.main);
-      }
-    } else {
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    if (!success) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Sai email hoặc mật khẩu")),
       );
@@ -86,7 +71,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
             ),
-
             Expanded(
               child: Container(
                 width: double.infinity,
@@ -119,9 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           height: 1.4,
                         ),
                       ),
-
                       const SizedBox(height: 30),
-
                       const Text("Email",
                           style: TextStyle(fontWeight: FontWeight.w500)),
                       const SizedBox(height: 6),
@@ -143,9 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 20),
-
                       const Text("Mật khẩu",
                           style: TextStyle(fontWeight: FontWeight.w500)),
                       const SizedBox(height: 6),
@@ -180,7 +160,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 8),
                       Align(
                         alignment: Alignment.centerRight,
@@ -193,9 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 15),
-
                       SizedBox(
                         width: double.infinity,
                         height: 52,
@@ -219,15 +196,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                         ),
                       ),
-
                       const SizedBox(height: 25),
-
                       const Center(
                         child: Text("hoặc đăng nhập bằng",
                             style: TextStyle(color: Colors.black54)),
                       ),
                       const SizedBox(height: 15),
-
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -241,9 +215,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               width: 45, height: 45),
                         ],
                       ),
-
                       const SizedBox(height: 25),
-
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

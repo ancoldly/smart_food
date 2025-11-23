@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:smart_food_frontend/data/models/address_model.dart';
 import 'package:smart_food_frontend/providers/address_provider.dart';
+import 'package:smart_food_frontend/presentation/screens/client/select_location_screen.dart';
 
 class EditAddressScreen extends StatefulWidget {
   final AddressModel address;
@@ -17,6 +19,9 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
   late TextEditingController wardCtrl;
   late TextEditingController streetCtrl;
 
+  double? lat;
+  double? lng;
+
   bool isDefault = false;
   String selectedType = "Nhà riêng";
   bool isLoading = false;
@@ -26,17 +31,20 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
   void initState() {
     super.initState();
 
-    final parts = widget.address.addressLine.split(","); 
-    final streetPart = parts.isNotEmpty ? parts.first : "";
-    final wardPart = parts.length > 1 ? parts.sublist(1).join(",").trim() : "";
+    final parts = widget.address.addressLine.split(",");
+    final street = parts.isNotEmpty ? parts.first.trim() : "";
+    final ward = parts.length > 1 ? parts.sublist(1).join(",").trim() : "";
 
     nameCtrl = TextEditingController(text: widget.address.receiverName);
     phoneCtrl = TextEditingController(text: widget.address.receiverPhone);
-    streetCtrl = TextEditingController(text: streetPart);
-    wardCtrl = TextEditingController(text: wardPart);
+    streetCtrl = TextEditingController(text: street);
+    wardCtrl = TextEditingController(text: ward);
 
-    isDefault = widget.address.isDefault;
     selectedType = widget.address.label;
+    isDefault = widget.address.isDefault;
+
+    lat = widget.address.latitude;
+    lng = widget.address.longitude;
   }
 
   @override
@@ -60,12 +68,11 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
             fontWeight: FontWeight.w600,
           ),
         ),
-
         actions: [
           IconButton(
             icon: const Icon(Icons.delete, color: Colors.red),
             onPressed: deleting ? null : _confirmDelete,
-          )
+          ),
         ],
       ),
 
@@ -77,9 +84,7 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
             const SizedBox(height: 18),
             _buildSettingCard(),
             const SizedBox(height: 50),
-
             _buildSubmitButton(),
-
             const SizedBox(height: 20),
           ],
         ),
@@ -89,7 +94,7 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
 
   Widget _buildInputCard() {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -98,19 +103,39 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Địa chỉ",
-            style: TextStyle(
-              color: Color(0xFF5B3A1E),
-              fontWeight: FontWeight.w700,
-              fontSize: 16,
+          const Text("Địa chỉ",
+              style: TextStyle(
+                color: Color(0xFF5B3A1E),
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+              )),
+
+          const SizedBox(height: 12),
+
+          _input("Họ và tên", nameCtrl),
+          _input("Số điện thoại", phoneCtrl, type: TextInputType.phone),
+          _input("Phường/xã, Quận/Huyện, Tỉnh", wardCtrl),
+          _input("Số nhà, tên đường", streetCtrl),
+
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton.icon(
+              onPressed: _openMap,
+              icon: const Icon(Icons.location_on_outlined,
+                  color: Color(0xFF5B7B56)),
+              label: const Text(
+                "Chọn trên bản đồ",
+                style: TextStyle(
+                  color: Color(0xFF5B7B56),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ),
-          const SizedBox(height: 12),
-          _input("Họ và tên", nameCtrl),
-          _input("Số điện thoại", phoneCtrl),
-          _input("Phường/xã, Quận/Huyện, Tỉnh/Thành phố", wardCtrl),
-          _input("Tên đường, toà nhà, số nhà", streetCtrl),
+
+          if (lat != null)
+            Text("Vị trí: ($lat, $lng)",
+                style: const TextStyle(fontSize: 12, color: Colors.black54)),
         ],
       ),
     );
@@ -118,7 +143,7 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
 
   Widget _buildSettingCard() {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -141,14 +166,12 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
               Switch(
                 value: isDefault,
                 activeColor: const Color(0xFF5B7B56),
-                onChanged: (value) {
-                  setState(() => isDefault = value);
-                },
+                onChanged: (value) => setState(() => isDefault = value),
               ),
             ],
           ),
 
-          const Divider(height: 20),
+          const Divider(height: 24),
 
           const Text(
             "Loại địa chỉ",
@@ -158,6 +181,7 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
               fontWeight: FontWeight.w600,
             ),
           ),
+
           const SizedBox(height: 12),
 
           Row(
@@ -168,7 +192,7 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
               const SizedBox(width: 10),
               _typeButton("Khác"),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -200,14 +224,15 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
     );
   }
 
-  Widget _input(String hint, TextEditingController ctrl) {
+  Widget _input(String hint, TextEditingController ctrl,
+      {TextInputType type = TextInputType.text}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: TextField(
         controller: ctrl,
+        keyboardType: type,
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: const TextStyle(fontSize: 14, color: Colors.black38),
           enabledBorder: const UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.black12),
           ),
@@ -220,7 +245,7 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
   }
 
   Widget _typeButton(String text) {
-    final isSelected = selectedType == text;
+    final active = selectedType == text;
 
     return GestureDetector(
       onTap: () => setState(() => selectedType = text),
@@ -229,19 +254,34 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(6),
           border: Border.all(
-            color: isSelected ? const Color(0xFF5B7B56) : const Color(0xFFB8B8B8),
-          ),
-          color: isSelected ? const Color(0xFFEEF5EE) : Colors.white,
+              color: active ? const Color(0xFF5B7B56) : const Color(0xFFB8B8B8)),
+          color: active ? const Color(0xFFEEF5EE) : Colors.white,
         ),
         child: Text(
           text,
           style: TextStyle(
-            color: isSelected ? const Color(0xFF5B7B56) : const Color(0xFF5B3A1E),
+            color: active ? const Color(0xFF5B7B56) : const Color(0xFF5B3A1E),
             fontWeight: FontWeight.w600,
           ),
         ),
       ),
     );
+  }
+
+  Future<void> _openMap() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const SelectLocationScreen()),
+    );
+
+    if (result != null) {
+      setState(() {
+        lat = result["lat"];
+        lng = result["lng"];
+        streetCtrl.text = result["street"] ?? "";
+        wardCtrl.text = result["ward"] ?? "";
+      });
+    }
   }
 
   Future<void> _updateAddress() async {
@@ -257,20 +297,22 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
 
     setState(() => isLoading = true);
 
-    final body = {
-      "receiver_name": nameCtrl.text,
-      "receiver_phone": phoneCtrl.text,
-      "address_line": "${streetCtrl.text}, ${wardCtrl.text}",
+    final provider = Provider.of<AddressProvider>(context, listen: false);
+
+    final success = await provider.updateAddress(widget.address.id, {
+      "receiver_name": nameCtrl.text.trim(),
+      "receiver_phone": phoneCtrl.text.trim(),
+      "address_line":
+          "${streetCtrl.text.trim()}, ${wardCtrl.text.trim()}",
       "label": selectedType,
       "is_default": isDefault,
-    };
-
-    final provider = Provider.of<AddressProvider>(context, listen: false);
-    final success = await provider.updateAddress(widget.address.id, body);
-
-    setState(() => isLoading = false);
+      "latitude": lat,
+      "longitude": lng,
+    });
 
     if (!mounted) return;
+
+    setState(() => isLoading = false);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -310,9 +352,9 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
     final provider = Provider.of<AddressProvider>(context, listen: false);
     final success = await provider.deleteAddress(widget.address.id);
 
-    setState(() => deleting = false);
-
     if (!mounted) return;
+
+    setState(() => deleting = false);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

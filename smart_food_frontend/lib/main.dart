@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:smart_food_frontend/providers/address_provider.dart';
 
 import 'package:smart_food_frontend/providers/auth_provider.dart';
+import 'package:smart_food_frontend/providers/payment_provider.dart';
+import 'package:smart_food_frontend/providers/store_provider.dart';
 import 'package:smart_food_frontend/providers/user_provider.dart';
 import 'package:smart_food_frontend/presentation/routes/app_routes.dart';
 
@@ -26,6 +28,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => AddressProvider()),
+        ChangeNotifierProvider(create: (_) => PaymentProvider()),
+        ChangeNotifierProvider(create: (_) => StoreProvider()),
       ],
       child: MaterialApp(
         navigatorKey: navigatorKey,      

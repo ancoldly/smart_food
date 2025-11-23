@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_food_frontend/data/models/address_model.dart';
-import 'package:smart_food_frontend/presentation/screens/edit_address_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/client/edit_address_screen.dart';
 
 class AddressItem extends StatelessWidget {
   final AddressModel address;

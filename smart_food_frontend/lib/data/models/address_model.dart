@@ -6,6 +6,9 @@ class AddressModel {
   final String receiverName;
   final String receiverPhone;
 
+  final double? latitude;   
+  final double? longitude; 
+
   AddressModel({
     required this.id,
     required this.label,
@@ -13,6 +16,8 @@ class AddressModel {
     required this.addressLine,
     required this.receiverName,
     required this.receiverPhone,
+    this.latitude,
+    this.longitude,
   });
 
   factory AddressModel.fromJson(Map<String, dynamic> json) {
@@ -23,6 +28,14 @@ class AddressModel {
       addressLine: json["address_line"] ?? "",
       receiverName: json["receiver_name"] ?? "",
       receiverPhone: json["receiver_phone"] ?? "",
+
+      latitude: (json["latitude"] != null)
+          ? json["latitude"].toDouble()
+          : null,
+
+      longitude: (json["longitude"] != null)
+          ? json["longitude"].toDouble()
+          : null,
     );
   }
 }

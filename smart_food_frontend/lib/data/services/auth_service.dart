@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:smart_food_frontend/data/services/token_storage.dart';
 
 import 'package:smart_food_frontend/data/models/user_model.dart';
-import 'package:smart_food_frontend/data/services/token_storage.dart';
 
 class AuthService {
   static const String baseUrl = "http://10.0.2.2:8000/api/users";

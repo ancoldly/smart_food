@@ -46,13 +46,11 @@ class _SplashScreenState extends State<SplashScreen>
   Future<void> _checkLogin() async {
     final auth = Provider.of<AuthProvider>(context, listen: false);
 
-    final ok = await auth.autoLogin(); 
+    final ok = await auth.autoLogin(context);
 
     if (!mounted) return;
 
-    if (ok) {
-      Navigator.pushReplacementNamed(context, AppRoutes.main);
-    } else {
+    if (!ok) {
       Navigator.pushReplacementNamed(context, AppRoutes.login);
     }
   }

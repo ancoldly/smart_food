@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:smart_food_frontend/data/models/user_model.dart';
 import 'package:smart_food_frontend/data/services/auth_service.dart';
 import 'package:smart_food_frontend/data/services/token_storage.dart';
+import 'package:smart_food_frontend/presentation/routes/app_routes.dart';
 import 'package:smart_food_frontend/providers/user_provider.dart';
-import 'package:smart_food_frontend/main.dart';  // để lấy navigatorKey
-
+import 'package:smart_food_frontend/main.dart'; // để lấy navigatorKey
 
 class AuthProvider with ChangeNotifier {
   final AuthService _authService = AuthService();
@@ -16,7 +16,7 @@ class AuthProvider with ChangeNotifier {
 
   bool get isLoggedIn => _user != null;
 
-  Future<bool> login(String email, String password) async {
+  Future<bool> login(BuildContext context, String email, String password) async {
     final result = await _authService.login(email, password);
 
     if (result["success"] == true) {
@@ -31,12 +31,14 @@ class AuthProvider with ChangeNotifier {
 
         _syncToUserProvider(profile);
 
+        // ignore: use_build_context_synchronously
+        checkRoleUser(context, profile.role);
+
         return true;
       }
     }
     return false;
   }
-
 
   Future<Map<String, dynamic>?> register({
     required String email,
@@ -54,7 +56,7 @@ class AuthProvider with ChangeNotifier {
     );
   }
 
-  Future<bool> autoLogin() async {
+  Future<bool> autoLogin(BuildContext context) async {
     final access = await TokenStorage.getAccessToken();
     if (access == null) return false;
 
@@ -77,6 +79,9 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
 
     _syncToUserProvider(profile);
+
+    // ignore: use_build_context_synchronously
+    checkRoleUser(context, profile.role);
 
     return true;
   }
@@ -102,6 +107,18 @@ class AuthProvider with ChangeNotifier {
     final ctx = navigatorKey.currentContext;
     if (ctx != null) {
       Provider.of<UserProvider>(ctx, listen: false).clearUser();
+    }
+  }
+
+  void checkRoleUser(BuildContext context, String role) {
+    if (role == "merchant") {
+      Navigator.pushReplacementNamed(context, AppRoutes.merchantStart);
+    } else if(role == "customer") {
+      Navigator.pushReplacementNamed(context, AppRoutes.main);
+    } else if (role == "shipper") {
+      Navigator.pushReplacementNamed(context, AppRoutes.merchantPending);
+    } else if (role == "admin") {
+      Navigator.pushReplacementNamed(context, AppRoutes.adminDashboard);
     }
   }
 }

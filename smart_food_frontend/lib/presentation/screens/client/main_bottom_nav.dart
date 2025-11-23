@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
-import 'package:smart_food_frontend/presentation/screens/home_screen.dart';
-import 'package:smart_food_frontend/presentation/screens/profile_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/client/home_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/client/profile_screen.dart';
 
 class MainBottomNav extends StatefulWidget {
   const MainBottomNav({super.key});

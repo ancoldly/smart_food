@@ -7,6 +7,17 @@ from rest_framework_simplejwt.views import TokenObtainPairView # type: ignore
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer # type: ignore
 from rest_framework import permissions, status
 
+from rest_framework.permissions import IsAuthenticated
+
+class CheckRoleView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return Response({
+            "id": request.user.id,
+            "email": request.user.email,
+            "role": request.user.role,
+        })
 
 # ======== API ĐĂNG KÝ ========
 class RegisterView(generics.CreateAPIView):
