@@ -7,16 +7,25 @@ class ShippersAllPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("All Shippers"),
+        title: const Text(
+          "All Shippers",
+          style: TextStyle(
+            color: Color(0xFF5B7B56),
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         centerTitle: true,
       ),
-
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _shipperCard("41", "Pham Minh A", "0905001122", "43A1-123.45", "Active"),
-          _shipperCard("42", "Tran Van B", "0905223344", "43B1-678.90", "Active"),
-          _shipperCard("43", "Le Thanh C", "0905334455", "43C1-345.67", "Blocked"),
+          _shipperCard(
+              "41", "Pham Minh A", "0905001122", "43A1-123.45", "Active"),
+          _shipperCard(
+              "42", "Tran Van B", "0905223344", "43B1-678.90", "Active"),
+          _shipperCard(
+              "43", "Le Thanh C", "0905334455", "43C1-345.67", "Blocked"),
         ],
       ),
     );
@@ -39,7 +48,6 @@ class ShippersAllPage extends StatelessWidget {
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.all(16),
-
         leading: CircleAvatar(
           radius: 26,
           backgroundColor: color.withOpacity(0.15),
@@ -49,7 +57,6 @@ class ShippersAllPage extends StatelessWidget {
             size: 26,
           ),
         ),
-
         title: Text(
           name,
           style: const TextStyle(
@@ -57,16 +64,13 @@ class ShippersAllPage extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
-
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 6),
             Text("Phone: $phone"),
             Text("Plate: $plate"),
-
             const SizedBox(height: 8),
-
             Chip(
               label: Text(status),
               backgroundColor: color.withOpacity(0.15),
@@ -77,7 +81,6 @@ class ShippersAllPage extends StatelessWidget {
             ),
           ],
         ),
-
         trailing: Column(
           children: [
             IconButton(

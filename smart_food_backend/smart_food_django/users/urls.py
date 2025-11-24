@@ -1,11 +1,15 @@
 from django.urls import path
-from .views import ChangePasswordView, CheckRoleView, RegisterView, EmailLoginView, CurrentUserView, UpdateProfileView
+from .views import AdminUserListView, ChangePasswordView, CheckRoleView, RegisterView, EmailLoginView, CurrentUserView, UpdateProfileView
 from rest_framework_simplejwt.views import TokenRefreshView # type: ignore
 from rest_framework_simplejwt.views import TokenBlacklistView # type: ignore
 
 
 
 urlpatterns = [
+
+    # ADMIN APIs
+    path("admin/users/", AdminUserListView.as_view(), name="admin_user_list"),
+    # USER APIs
     path("check-role/", CheckRoleView.as_view(), name="check_role"),
     path('register/', RegisterView.as_view(), name='register'),
     path('login/', EmailLoginView.as_view(), name='login'),

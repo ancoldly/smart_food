@@ -18,15 +18,20 @@ class _VouchersPageState extends State<VouchersPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Voucher Manager"),
+        title: const Text(
+          "Voucher Manager",
+          style: TextStyle(
+            color: Color(0xFF5B7B56),
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         centerTitle: true,
       ),
-
       floatingActionButton: FloatingActionButton(
         onPressed: () => _openCreateVoucherSheet(context),
         child: const Icon(Icons.add),
       ),
-
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -37,7 +42,8 @@ class _VouchersPageState extends State<VouchersPage> {
     );
   }
 
-  Widget _voucherCard(String code, String discount, String minOrder, String type) {
+  Widget _voucherCard(
+      String code, String discount, String minOrder, String type) {
     return Card(
       elevation: 3,
       margin: const EdgeInsets.only(bottom: 14),
@@ -46,7 +52,6 @@ class _VouchersPageState extends State<VouchersPage> {
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.all(16),
-
         title: Text(
           code,
           style: const TextStyle(
@@ -54,16 +59,13 @@ class _VouchersPageState extends State<VouchersPage> {
             fontWeight: FontWeight.bold,
           ),
         ),
-
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 6),
             Text("Discount: $discount"),
             Text("Min Order: $minOrder"),
-
             const SizedBox(height: 8),
-
             Chip(
               label: Text(type),
               backgroundColor: type == "Percent"
@@ -76,7 +78,6 @@ class _VouchersPageState extends State<VouchersPage> {
             ),
           ],
         ),
-
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -113,27 +114,20 @@ class _VouchersPageState extends State<VouchersPage> {
             top: 24,
             bottom: MediaQuery.of(context).viewInsets.bottom + 20,
           ),
-
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-
               const Text(
                 "Create Voucher",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-
               const SizedBox(height: 20),
               _inputField("Voucher Code", codeCtrl),
-
               const SizedBox(height: 12),
               _inputField("Discount", discountCtrl),
-
               const SizedBox(height: 12),
               _inputField("Minimum Order", minOrderCtrl),
-
               const SizedBox(height: 20),
-
               Row(
                 children: [
                   Radio(
@@ -144,9 +138,7 @@ class _VouchersPageState extends State<VouchersPage> {
                     },
                   ),
                   const Text("Percent (%)"),
-
                   const SizedBox(width: 20),
-
                   Radio(
                     value: "amount",
                     groupValue: discountType,
@@ -157,9 +149,7 @@ class _VouchersPageState extends State<VouchersPage> {
                   const Text("Amount (VND)"),
                 ],
               ),
-
               const SizedBox(height: 16),
-
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(

@@ -209,15 +209,14 @@ class ProfileScreen extends StatelessWidget {
                       final storeProvider =
                           Provider.of<StoreProvider>(context, listen: false);
 
-                      await storeProvider.loadStores();
+                      await storeProvider.loadMyStore();
 
-                      if (storeProvider.stores.isEmpty) {
+                      if (storeProvider.myStore == null) {
                         // ignore: use_build_context_synchronously
                         Navigator.pushNamed(context, AppRoutes.merchantStart);
                       } else {
-                        final store = storeProvider.stores.first;
-
-                        if (store.status == 1) {
+                        final store = storeProvider.myStore;
+                        if (store?.status == 1) {
                           // ignore: use_build_context_synchronously
                           Navigator.pushNamed(
                               context, AppRoutes.merchantPending);

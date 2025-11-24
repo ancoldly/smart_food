@@ -1,6 +1,9 @@
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from users.permissions import IsAdminRole
+
 from .models import User
 from .serializers import ChangePasswordSerializer, RegisterSerializer, UpdateProfileSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView # type: ignore
@@ -119,3 +122,23 @@ class ChangePasswordView(APIView):
             "message": "Đổi mật khẩu thành công"
         }, status=status.HTTP_200_OK)
 
+class AdminUserListView(APIView):
+    permission_classes = [IsAdminRole]
+
+    def get(self, request):
+        users = User.objects.all().order_by("-created_at")
+
+        data = [
+            {
+                "id": u.id,
+                "email": u.email,
+                "full_name": u.full_name,
+                "phone": u.phone,
+                "role": u.role,
+                "avatar": request.build_absolute_uri(u.avatar.url) if u.avatar else None,
+                "created_at": u.created_at,
+            }
+            for u in users
+        ]
+
+        return Response(data, status=200)

@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:smart_food_frontend/providers/store_provider.dart';
 import 'package:smart_food_frontend/providers/user_provider.dart';
 import 'package:smart_food_frontend/presentation/screens/client/select_location_screen.dart';
+import 'package:smart_food_frontend/presentation/routes/app_routes.dart';
 
 class StoreDescribeScreen extends StatefulWidget {
   final String category;
@@ -131,7 +132,7 @@ class _StoreDescribeScreenState extends State<StoreDescribeScreen> {
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Tạo cửa hàng thành công")));
-      Navigator.pop(context);
+      Navigator.popAndPushNamed(context, AppRoutes.merchantPending);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Không thể tạo cửa hàng")));

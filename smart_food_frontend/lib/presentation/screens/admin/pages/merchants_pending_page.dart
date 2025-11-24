@@ -14,7 +14,7 @@ class _MerchantsPendingPageState extends State<MerchantsPendingPage> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      Provider.of<StoreProvider>(context, listen: false).loadStores();
+      Provider.of<StoreProvider>(context, listen: false).loadStoresAdmin();
     });
   }
 
@@ -56,7 +56,7 @@ class _MerchantsPendingPageState extends State<MerchantsPendingPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.asset(
-                          "assets/images/no_pending.png",
+                          "./assets/images/no_pending.png",
                           width: 180,
                           height: 180,
                         ),

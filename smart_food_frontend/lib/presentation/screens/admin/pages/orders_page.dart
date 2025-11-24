@@ -7,17 +7,25 @@ class OrdersPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Orders Management"),
+        title: const Text(
+          "Orders Management",
+          style: TextStyle(
+            color: Color(0xFF5B7B56),
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         centerTitle: true,
       ),
-
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _orderCard("1001", "Nguyen Van A", "Bún Bò Huế A", "125,000đ", "Completed"),
+          _orderCard(
+              "1001", "Nguyen Van A", "Bún Bò Huế A", "125,000đ", "Completed"),
           _orderCard("1002", "Tran Thi B", "Trà Sữa B", "65,000đ", "Preparing"),
           _orderCard("1003", "Le Van C", "Cơm Gà C", "45,000đ", "Pending"),
-          _orderCard("1004", "Pham Minh D", "Pizza Deli", "150,000đ", "Canceled"),
+          _orderCard(
+              "1004", "Pham Minh D", "Pizza Deli", "150,000đ", "Canceled"),
         ],
       ),
     );
@@ -46,7 +54,8 @@ class OrdersPage extends StatelessWidget {
         leading: CircleAvatar(
           radius: 26,
           backgroundColor: color.withOpacity(0.15),
-          child: const Icon(Icons.receipt_long, size: 26, color: Colors.black87),
+          child:
+              const Icon(Icons.receipt_long, size: 26, color: Colors.black87),
         ),
 
         // TITLE + INFO
@@ -61,7 +70,6 @@ class OrdersPage extends StatelessWidget {
             Text("Customer: $user"),
             Text("Merchant: $merchant"),
             Text("Total: $total"),
-
             const SizedBox(height: 6),
             Chip(
               label: Text(status),

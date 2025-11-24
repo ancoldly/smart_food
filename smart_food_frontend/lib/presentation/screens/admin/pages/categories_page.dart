@@ -20,15 +20,20 @@ class _CategoriesPageState extends State<CategoriesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Categories Manager"),
+        title: const Text(
+          "Categories Manager",
+          style: TextStyle(
+            color: Color(0xFF5B7B56),
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         centerTitle: true,
       ),
-
       floatingActionButton: FloatingActionButton(
         onPressed: () => _openCreateSheet(context),
         child: const Icon(Icons.add),
       ),
-
       body: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: categories.length,
@@ -50,20 +55,16 @@ class _CategoriesPageState extends State<CategoriesPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       child: ListTile(
         contentPadding: const EdgeInsets.all(16),
-
         leading: CircleAvatar(
           radius: 26,
           backgroundColor: Colors.teal.withOpacity(0.15),
           child: const Icon(Icons.category, color: Colors.teal, size: 26),
         ),
-
         title: Text(
           name,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
         ),
-
         subtitle: Text("ID: $id"),
-
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -150,19 +151,18 @@ class _CategoriesPageState extends State<CategoriesPage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(title,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              style:
+                  const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           const SizedBox(height: 20),
-
           TextField(
             controller: nameCtrl,
             decoration: InputDecoration(
               labelText: "Category Name",
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             ),
           ),
-
           const SizedBox(height: 20),
-
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(

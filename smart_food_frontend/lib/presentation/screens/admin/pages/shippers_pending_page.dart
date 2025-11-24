@@ -7,15 +7,23 @@ class ShippersPendingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Shipper Pending Approval"),
+        title: const Text(
+          "Shipper Pending Approval",
+          style: TextStyle(
+            color: Color(0xFF5B7B56),
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         centerTitle: true,
       ),
-
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _pendingCard(context, "41", "Pham Minh A", "0905001122", "43A1-123.45"),
-          _pendingCard(context, "42", "Tran Van B", "0905223344", "43B1-678.90"),
+          _pendingCard(
+              context, "41", "Pham Minh A", "0905001122", "43A1-123.45"),
+          _pendingCard(
+              context, "42", "Tran Van B", "0905223344", "43B1-678.90"),
         ],
       ),
     );
@@ -36,25 +44,22 @@ class ShippersPendingPage extends StatelessWidget {
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.all(16),
-
         leading: CircleAvatar(
           radius: 26,
           backgroundColor: Colors.orange.withOpacity(0.15),
-          child: const Icon(Icons.pending_actions, color: Colors.orange, size: 26),
+          child:
+              const Icon(Icons.pending_actions, color: Colors.orange, size: 26),
         ),
-
         title: Text(
           name,
           style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
         ),
-
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 6),
             Text("Phone: $phone"),
             Text("Plate: $plate"),
-
             const SizedBox(height: 8),
             Chip(
               label: const Text("Pending"),
@@ -66,7 +71,6 @@ class ShippersPendingPage extends StatelessWidget {
             ),
           ],
         ),
-
         trailing: Column(
           children: [
             ElevatedButton(
@@ -114,7 +118,6 @@ class ShippersPendingPage extends StatelessWidget {
               const SizedBox(height: 14),
               Text("Xác nhận duyệt shipper: $name ?"),
               const SizedBox(height: 20),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -128,7 +131,8 @@ class ShippersPendingPage extends StatelessWidget {
                       Navigator.pop(context);
                       _showSnackbar(context, "Đã duyệt shipper $name");
                     },
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: Colors.green),
                     child: const Text("Duyệt"),
                   ),
                 ],
@@ -162,7 +166,6 @@ class ShippersPendingPage extends StatelessWidget {
               const SizedBox(height: 14),
               Text("Bạn có chắc muốn từ chối shipper: $name ?"),
               const SizedBox(height: 20),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -176,7 +179,8 @@ class ShippersPendingPage extends StatelessWidget {
                       Navigator.pop(context);
                       _showSnackbar(context, "Đã từ chối shipper $name");
                     },
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: Colors.red),
                     child: const Text("Từ chối"),
                   ),
                 ],

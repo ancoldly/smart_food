@@ -73,7 +73,10 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const RegisterScreen());
 
       case main:
-        return MaterialPageRoute(builder: (_) => const MainBottomNav());
+        final int index = settings.arguments as int? ?? 0;
+        return MaterialPageRoute(
+          builder: (_) => MainBottomNav(initialIndex: index),
+        );
 
       case home:
         return MaterialPageRoute(builder: (_) => const HomeScreen());

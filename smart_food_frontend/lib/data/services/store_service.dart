@@ -9,9 +9,9 @@ class StoreService {
   static const String baseUrl = "http://10.0.2.2:8000/api/stores";
 
   // =============================
-  //   GET ALL STORES (OF USER)
+  //   ADMIN: GET ALL STORES
   // =============================
-  static Future<List<StoreModel>> fetchStores() async {
+  static Future<List<StoreModel>> fetchStoresAdmin() async {
     final res = await ApiClient.send((token) {
       return http.get(
         Uri.parse("$baseUrl/admin/all/"),
@@ -28,13 +28,44 @@ class StoreService {
   }
 
   // =============================
+  //   USER: GET MY STORE (ONE)
+  // =============================
+  static Future<StoreModel?> fetchMyStore() async {
+    final res = await ApiClient.send((token) {
+      return http.get(
+        Uri.parse("$baseUrl/me/"),
+        headers: {"Authorization": "Bearer $token"},
+      );
+    });
+
+    if (res.statusCode == 200) {
+      final body = utf8.decode(res.bodyBytes).trim();
+
+      // ===========================
+      // case 1: backend trả null
+      // case 2: backend trả "" hoặc "null"
+      // ===========================
+      if (body.isEmpty || body == "null") {
+        return null;
+      }
+
+      final data = jsonDecode(body);
+      if (data == null) return null;
+
+      return StoreModel.fromJson(data);
+    }
+
+    return null;
+  }
+
+  // =============================
   //   CREATE STORE (MULTIPART)
   // =============================
   static Future<bool> createStore({
     required Map<String, String> fields,
     File? backgroundImage,
   }) async {
-    final uri = Uri.parse("$baseUrl/");
+    final uri = Uri.parse("$baseUrl/create/");
 
     final res = await ApiClient.sendMultipart((token) async {
       final req = http.MultipartRequest("POST", uri);
@@ -65,7 +96,6 @@ class StoreService {
 
   // =============================
   //   UPDATE STORE (MULTIPART)
-  //   (Xử lý ảnh giống lúc tạo store)
   // =============================
   static Future<bool> updateStore({
     required int id,
@@ -121,7 +151,7 @@ class StoreService {
   static Future<bool> approveStore(int id) async {
     final res = await ApiClient.send((token) {
       return http.post(
-        Uri.parse("$baseUrl/$id/approve/"),
+        Uri.parse("$baseUrl/admin/$id/approve/"),
         headers: {"Authorization": "Bearer $token"},
       );
     });
@@ -135,7 +165,7 @@ class StoreService {
   static Future<bool> rejectStore(int id) async {
     final res = await ApiClient.send((token) {
       return http.post(
-        Uri.parse("$baseUrl/$id/reject/"),
+        Uri.parse("$baseUrl/admin/$id/reject/"),
         headers: {"Authorization": "Bearer $token"},
       );
     });

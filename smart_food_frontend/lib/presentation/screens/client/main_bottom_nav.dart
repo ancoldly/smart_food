@@ -5,14 +5,22 @@ import 'package:smart_food_frontend/presentation/screens/client/home_screen.dart
 import 'package:smart_food_frontend/presentation/screens/client/profile_screen.dart';
 
 class MainBottomNav extends StatefulWidget {
-  const MainBottomNav({super.key});
+  final int initialIndex;
+
+  const MainBottomNav({super.key, this.initialIndex = 0});
 
   @override
   State<MainBottomNav> createState() => _MainBottomNavState();
 }
 
 class _MainBottomNavState extends State<MainBottomNav> {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialIndex; 
+  }
 
   final List<Widget> _screens = const [
     HomeScreen(),
@@ -49,3 +57,4 @@ class _MainBottomNavState extends State<MainBottomNav> {
     );
   }
 }
+

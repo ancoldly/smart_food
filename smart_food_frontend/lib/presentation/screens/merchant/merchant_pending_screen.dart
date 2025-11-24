@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_food_frontend/presentation/routes/app_routes.dart';
 
 class MerchantPendingScreen extends StatelessWidget {
   const MerchantPendingScreen({super.key});
@@ -22,10 +23,7 @@ class MerchantPendingScreen extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, size: 18, color: Colors.black87),
-          onPressed: () => Navigator.pop(context),
-        ),
+        automaticallyImplyLeading: false,
       ),
       body: Center(
         child: Padding(
@@ -63,7 +61,7 @@ class MerchantPendingScreen extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () => Navigator.popAndPushNamed(context, AppRoutes.main, arguments: 3),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: green,
                     padding: const EdgeInsets.symmetric(vertical: 15),

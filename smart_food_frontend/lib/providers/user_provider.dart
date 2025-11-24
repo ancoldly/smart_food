@@ -5,13 +5,28 @@ import 'package:smart_food_frontend/data/services/user_service.dart';
 import 'package:smart_food_frontend/data/services/auth_service.dart';
 
 class UserProvider with ChangeNotifier {
+  // ------------------------------
+  // USER INFO (CURRENT USER)
+  // ------------------------------
   UserModel? _user;
   UserModel? get user => _user;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  Future<void> loadUser(UserModel profile) async {
+  // ------------------------------
+  // ADMIN: LIST USERS
+  // ------------------------------
+  List<UserModel> _allUsers = [];
+  List<UserModel> get allUsers => _allUsers;
+
+  bool _loadingAllUsers = false;
+  bool get loadingAllUsers => _loadingAllUsers;
+
+  // =====================================================
+  // LOAD CURRENT USER PROFILE
+  // =====================================================
+  Future<void> loadUserProfile() async {
     _isLoading = true;
     notifyListeners();
 
@@ -22,6 +37,9 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // =====================================================
+  // UPDATE PROFILE
+  // =====================================================
   Future<bool> updateProfile({
     String? fullName,
     String? phone,
@@ -47,6 +65,9 @@ class UserProvider with ChangeNotifier {
     return success;
   }
 
+  // =====================================================
+  // CHANGE PASSWORD
+  // =====================================================
   Future<Map<String, dynamic>> changePassword({
     required String oldPassword,
     required String newPassword,
@@ -66,6 +87,26 @@ class UserProvider with ChangeNotifier {
     return result;
   }
 
+  // =====================================================
+  // ADMIN: LOAD ALL USERS
+  // =====================================================
+  Future<void> loadAllUsers() async {
+    _loadingAllUsers = true;
+    notifyListeners();
+
+    final data = await UserService.getAllUsers();
+
+    _allUsers = data
+        .map((e) => UserModel.fromJson(e))
+        .toList();
+
+    _loadingAllUsers = false;
+    notifyListeners();
+  }
+
+  // =====================================================
+  // LOCAL SYNC & CLEAR
+  // =====================================================
   void syncUser(UserModel user) {
     _user = user;
     notifyListeners();

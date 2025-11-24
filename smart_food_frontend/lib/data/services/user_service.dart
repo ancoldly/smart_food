@@ -7,6 +7,28 @@ import 'package:smart_food_frontend/data/services/api_client.dart';
 class UserService {
   static const String baseUrl = "http://10.0.2.2:8000/api/users";
 
+  static Future<List<Map<String, dynamic>>> getAllUsers() async {
+    final url = Uri.parse("$baseUrl/admin/users/");
+
+    final res = await ApiClient.send((token) {
+      return http.get(
+        url,
+        headers: {
+          "Authorization": "Bearer $token",
+          "Accept": "application/json",
+        },
+      );
+    });
+
+    if (res.statusCode == 200) {
+      final decoded = utf8.decode(res.bodyBytes);
+      final List data = jsonDecode(decoded);
+      return data.map((e) => e as Map<String, dynamic>).toList();
+    }
+
+    return [];
+  }
+
   static Future<bool> updateProfile({
     String? fullName,
     String? phone,
