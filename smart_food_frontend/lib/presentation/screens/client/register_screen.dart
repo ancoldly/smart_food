@@ -11,6 +11,7 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
@@ -46,12 +47,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Future<void> _handleRegister() async {
     final name = _nameController.text.trim();
+    final phone = _phoneController.text.trim();
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
     final confirm = _confirmController.text.trim();
 
-    if (name.isEmpty || email.isEmpty || password.isEmpty || confirm.isEmpty) {
+    if (name.isEmpty ||
+        phone.isEmpty ||
+        email.isEmpty ||
+        password.isEmpty ||
+        confirm.isEmpty) {
       _showMessage("Vui lòng nhập đầy đủ thông tin!");
+      return;
+    }
+
+    final phoneDigits = phone.replaceAll(RegExp(r'\\D'), '');
+    if (phoneDigits.length < 8 || phoneDigits.length > 15) {
+      _showMessage("Số điện thoại không hợp lệ (8-15 số).");
       return;
     }
 
@@ -65,6 +77,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final response = await _authService.register(
       email: email,
       username: email.split('@')[0],
+      phone: phone,
       password: password,
       password2: confirm,
       fullName: name,
@@ -99,7 +112,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
             ),
-
             Expanded(
               child: Container(
                 width: double.infinity,
@@ -110,12 +122,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     topRight: Radius.circular(45),
                   ),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 30),
-
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 25, vertical: 30),
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-
                     children: [
                       const Text('Họ và tên'),
                       const SizedBox(height: 6),
@@ -124,7 +135,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         decoration: _inputDeco('Nhập họ và tên'),
                       ),
                       const SizedBox(height: 18),
-
+                      const Text('Số điện thoại'),
+                      const SizedBox(height: 6),
+                      TextField(
+                        controller: _phoneController,
+                        keyboardType: TextInputType.phone,
+                        decoration: _inputDeco('Nhập số điện thoại'),
+                      ),
+                      const SizedBox(height: 18),
                       const Text('Email'),
                       const SizedBox(height: 6),
                       TextField(
@@ -132,7 +150,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         decoration: _inputDeco('Nhập email'),
                       ),
                       const SizedBox(height: 18),
-
                       const Text('Mật khẩu'),
                       const SizedBox(height: 6),
                       TextField(
@@ -140,15 +157,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         obscureText: !_pwVisible,
                         decoration: _inputDeco('Nhập mật khẩu').copyWith(
                           suffixIcon: IconButton(
-                            icon: Icon(
-                              _pwVisible ? Icons.visibility : Icons.visibility_off
-                            ),
-                            onPressed: () => setState(() => _pwVisible = !_pwVisible),
+                            icon: Icon(_pwVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off),
+                            onPressed: () =>
+                                setState(() => _pwVisible = !_pwVisible),
                           ),
                         ),
                       ),
                       const SizedBox(height: 18),
-
                       const Text('Xác nhận mật khẩu'),
                       const SizedBox(height: 6),
                       TextField(
@@ -156,15 +173,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         obscureText: !_confirmVisible,
                         decoration: _inputDeco('Nhập lại mật khẩu').copyWith(
                           suffixIcon: IconButton(
-                            icon: Icon(
-                              _confirmVisible ? Icons.visibility : Icons.visibility_off
-                            ),
-                            onPressed: () => setState(() => _confirmVisible = !_confirmVisible),
+                            icon: Icon(_confirmVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off),
+                            onPressed: () => setState(
+                                () => _confirmVisible = !_confirmVisible),
                           ),
                         ),
                       ),
                       const SizedBox(height: 22),
-
                       SizedBox(
                         width: double.infinity,
                         height: 52,
@@ -177,7 +194,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                           ),
                           child: _isLoading
-                              ? const CircularProgressIndicator(color: Colors.white)
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white)
                               : const Text(
                                   'Đăng ký',
                                   style: TextStyle(
@@ -189,27 +207,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       ),
                       const SizedBox(height: 25),
-
-                      Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text('Nếu bạn đã có tài khoản? '),
-                            TextButton(
-                              onPressed: () => Navigator.pushReplacementNamed(
-                                context,
-                                AppRoutes.login,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text('Nếu bạn đã có tài khoản? '),
+                          TextButton(
+                            onPressed: () => Navigator.pushReplacementNamed(
+                              context,
+                              AppRoutes.login,
+                            ),
+                            child: const Text(
+                              'Đăng nhập',
+                              style: TextStyle(
+                                color: Color(0xFFFF914D),
+                                fontWeight: FontWeight.bold,
                               ),
-                              child: const Text(
-                                'Đăng nhập',
-                                style: TextStyle(
-                                  color: Color(0xFFFF914D),
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
+                            ),
+                          )
+                        ],
                       )
                     ],
                   ),

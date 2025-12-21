@@ -46,7 +46,11 @@ INSTALLED_APPS = [
     'address',
     'payments',
     'stores',
-]
+    'employees',
+    'categories',
+    'products',
+    'vouchers'
+] 
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (

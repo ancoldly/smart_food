@@ -10,6 +10,7 @@ class AuthService {
   Future<Map<String, dynamic>?> register({
     required String email,
     required String username,
+    required String phone,
     required String password,
     required String password2,
     String? fullName,
@@ -22,6 +23,7 @@ class AuthService {
       body: jsonEncode({
         "email": email,
         "username": username,
+        "phone": phone,
         "full_name": fullName ?? "",
         "password": password,
         "password2": password2,
@@ -91,7 +93,8 @@ class AuthService {
     );
 
     if (res.statusCode == 200) {
-      return UserModel.fromJson(jsonDecode(res.body));
+      final utf8Body = utf8.decode(res.bodyBytes);
+      return UserModel.fromJson(jsonDecode(utf8Body));
     }
 
     return null;

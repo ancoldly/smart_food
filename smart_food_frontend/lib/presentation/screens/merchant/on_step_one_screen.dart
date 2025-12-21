@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smart_food_frontend/presentation/routes/app_routes.dart';
-import 'package:smart_food_frontend/presentation/screens/merchant/store_descibe_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/merchant/on_step_two_screen.dart';
 import 'package:smart_food_frontend/presentation/widgets/service_card_on_step_one.dart';
 
 class OnStepOneScreen extends StatelessWidget {
@@ -84,7 +83,7 @@ class OnStepOneScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => const StoreDescribeScreen(
+                      builder: (_) => const OnStepTwoScreen(
                         category: "food",
                       ),
                     ),
@@ -101,7 +100,7 @@ class OnStepOneScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => const StoreDescribeScreen(
+                      builder: (_) => const OnStepTwoScreen(
                         category: "mart",
                       ),
                     ),

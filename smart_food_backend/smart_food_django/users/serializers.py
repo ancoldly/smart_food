@@ -1,3 +1,4 @@
+import re
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from .models import User
@@ -10,10 +11,21 @@ class RegisterSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'email', 'username', 'password', 'password2', 'full_name', 'phone', 'role', 'avatar')
         read_only_fields = ('id',)
+        extra_kwargs = {
+            'phone': {'required': True, 'allow_blank': False},
+        }
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError({"password": "Passwords must match."})
+
+        phone = attrs.get('phone')
+        if not phone:
+            raise serializers.ValidationError({"phone": "Phone is required."})
+        phone_digits = re.sub(r'\D', '', phone)
+        if len(phone_digits) < 8 or len(phone_digits) > 15:
+            raise serializers.ValidationError({"phone": "Phone number length must be between 8-15 digits."})
+
         return attrs
 
     def create(self, validated_data):

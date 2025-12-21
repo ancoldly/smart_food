@@ -3,8 +3,10 @@ import 'package:provider/provider.dart';
 
 import 'package:smart_food_frontend/data/models/user_model.dart';
 import 'package:smart_food_frontend/data/services/auth_service.dart';
+import 'package:smart_food_frontend/data/services/merchant_storage.dart';
 import 'package:smart_food_frontend/data/services/token_storage.dart';
 import 'package:smart_food_frontend/presentation/routes/app_routes.dart';
+import 'package:smart_food_frontend/providers/store_provider.dart';
 import 'package:smart_food_frontend/providers/user_provider.dart';
 import 'package:smart_food_frontend/main.dart'; // để lấy navigatorKey
 
@@ -16,7 +18,8 @@ class AuthProvider with ChangeNotifier {
 
   bool get isLoggedIn => _user != null;
 
-  Future<bool> login(BuildContext context, String email, String password) async {
+  Future<bool> login(
+      BuildContext context, String email, String password) async {
     final result = await _authService.login(email, password);
 
     if (result["success"] == true) {
@@ -44,12 +47,14 @@ class AuthProvider with ChangeNotifier {
     required String email,
     required String username,
     required String fullName,
+    required String phone,
     required String password,
     required String password2,
   }) async {
     return await _authService.register(
       email: email,
       username: username,
+      phone: phone,
       fullName: fullName,
       password: password,
       password2: password2,
@@ -110,15 +115,55 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  void checkRoleUser(BuildContext context, String role) {
+  void checkRoleUser(BuildContext context, String role) async {
     if (role == "merchant") {
-      Navigator.pushReplacementNamed(context, AppRoutes.merchantStart);
-    } else if(role == "customer") {
+      final storeProvider = Provider.of<StoreProvider>(context, listen: false);
+      await storeProvider.loadMyStore();
+
+      final store = storeProvider.myStore;
+
+      if (store == null) {
+        // ignore: use_build_context_synchronously
+        Navigator.pushReplacementNamed(context, AppRoutes.onStepZero);
+        return;
+      }
+
+      if (store.status == 2) {
+        final seen = await MerchantStorage.isWelcomeSeen(user!.id);
+
+        if (!seen) {
+          // ignore: use_build_context_synchronously
+          Navigator.pushReplacementNamed(context, AppRoutes.merchantStart);
+          return;
+        }
+        // ignore: use_build_context_synchronously
+        Navigator.pushReplacementNamed(context, AppRoutes.mainMerchant);
+        return;
+      }
+
+      if (store.status == 4) {
+        // ignore: use_build_context_synchronously
+        Navigator.pushReplacementNamed(context, AppRoutes.mainMerchant);
+        return;
+      }
+    }
+
+    if (role == "customer") {
+      // ignore: use_build_context_synchronously
       Navigator.pushReplacementNamed(context, AppRoutes.main);
-    } else if (role == "shipper") {
-      Navigator.pushReplacementNamed(context, AppRoutes.merchantPending);
-    } else if (role == "admin") {
+      return;
+    }
+
+    if (role == "admin") {
+      // ignore: use_build_context_synchronously
       Navigator.pushReplacementNamed(context, AppRoutes.adminDashboard);
+      return;
+    }
+
+    if (role == "shipper") {
+      // ignore: use_build_context_synchronously
+      Navigator.pushReplacementNamed(context, AppRoutes.main);
+      return;
     }
   }
 }
