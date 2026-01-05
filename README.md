@@ -135,7 +135,6 @@ Note: These instructions are for development environments.
    ```bash
    flutter build apk --release
    ```
----
 
 ## 🗄 Database
 PostgreSQL is used for persistent storage. The backend models include users, roles, stores, menus, orders, and delivery records. Use Django admin or migrations to manage schema.
