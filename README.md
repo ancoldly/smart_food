@@ -4,7 +4,6 @@ Pushan Food is a cross-platform food delivery application (Android / iOS) built 
 
 Status: Work in progress  
 Purpose: Demo of a full food ordering and delivery workflow with role-based features.
-
 ---
 
 ## 📌 Key Features
@@ -17,7 +16,6 @@ Purpose: Demo of a full food ordering and delivery workflow with role-based feat
 - Admin: manage users, merchants, shippers, stores, orders, and categories  
 - Authentication via JWT (SimpleJWT)  
 - Demo payment flow (not production-ready)
-
 ---
 
 ## 👥 Roles & Responsibilities
@@ -45,7 +43,6 @@ Purpose: Demo of a full food ordering and delivery workflow with role-based feat
   - Approve and manage stores
   - Monitor orders and system activity
   - Manage global categories and system data
-
 ---
 
 ## 🧭 Architecture
@@ -61,7 +58,6 @@ Typical flow:
 3. Merchant confirms and prepares the order.  
 4. Shipper accepts the delivery, follows route, and marks delivery updates.  
 5. Order status is updated and synchronized across roles.
-
 ---
 
 ## 🛠 Tech Stack
@@ -71,7 +67,6 @@ Typical flow:
 - Database: PostgreSQL  
 - Maps: Here Maps API (demo)  
 - Tools: Android Studio, Flutter SDK, Python virtual environment
-
 ---
 
 ## 📁 Repository Structure (overview)
@@ -79,7 +74,6 @@ Typical flow:
 - smart_food_frontend/ — Flutter mobile application source code  
 - docs/ — screenshots, UI mockups, and design assets  
 - README.md, LICENSE, requirements.txt, pubspec.yaml, etc.
-
 ---
 
 ## ▶️ Quick Setup & Run
@@ -147,67 +141,67 @@ Note: These instructions are for development environments.
    ```bash
    flutter build apk --release
    ```
-
 ---
 
 ## 🗄 Database
 PostgreSQL is used for persistent storage. The backend models include users, roles, stores, menus, orders, and delivery records. Use Django admin or migrations to manage schema.
-
 ---
 
 ## 💳 Payments
 Payment flows are demo only and not integrated with real payment gateways. Do not use demo payment logic in production.
-
 ---
 
 ## ⚠️ Notes & Limitations
 - This project is a work-in-progress and intended primarily as a demo/prototype.  
 - Do not use demo configurations or payment flows in production.  
 - Proper secrets management, HTTPS, production settings, and secure deployment are required for production use.
-
 ---
 
 🖼 Screenshots / UI mockups
 ---
-
 <!-- Row 1: User core screens -->
 <p align="center">
-  <img src="docs/screenshot-home-user.png" width="220" />
-  <img src="docs/screenshot-search.png" width="220" />
-  <img src="docs/screenshot-store-detail.png" width="220" />
-  <img src="docs/screenshot-cart.png" width="220" />
+  <img src="docs/screenshot-home-user.png" width="250" />
+  <img src="docs/screenshot-search.png" width="250" />
+  <img src="docs/screenshot-store-detail.png" width="250" />
 </p>
 
-<!-- Row 2: Order flow -->
 <p align="center">
-  <img src="docs/screenshot-checkout.png" width="220" />
-  <img src="docs/screenshot-order-1.png" width="220" />
-  <img src="docs/screenshot-like.png" width="220" />
-  <img src="docs/screenshot-info-store-detail.png" width="220" />
+  <img src="docs/screenshot-cart.png" width="250" />
+  <img src="docs/screenshot-checkout.png" width="250" />
+  <img src="docs/screenshot-order-1.png" width="250" />
+</p>
+
+<!-- Row 2: User interaction -->
+<p align="center">
+  <img src="docs/screenshot-like.png" width="250" />
+  <img src="docs/screenshot-info-store-detail.png" width="250" />
+  <img src="docs/screenshot-category.png" width="250" />
 </p>
 
 <!-- Row 3: Merchant -->
 <p align="center">
-  <img src="docs/screenshot-category-merchant.png" width="220" />
-  <img src="docs/screenshot-product-merchant.png" width="220" />
-  <img src="docs/screenshot-profile-merchant.png" width="220" />
-  <img src="docs/screenshot-merchant-dashboard.png" width="220" />
+  <img src="docs/screenshot-category-merchant.png" width="250" />
+  <img src="docs/screenshot-product-merchant.png" width="250" />
+  <img src="docs/screenshot-profile-merchant.png" width="250" />
+</p>
+
+<p align="center">
+  <img src="docs/screenshot-merchant-dashboard.png" width="250" />
+  <img src="docs/screenshot-product-detail.png" width="250" />
+  <img src="docs/screenshot-hotline.png" width="250" />
 </p>
 
 <!-- Row 4: Shipper -->
 <p align="center">
-  <img src="docs/screenshot-home-shipper.png" width="220" />
-  <img src="docs/screenshot-menu-shipper.png" width="220" />
-  <img src="docs/screenshot-money-shipper.png" width="220" />
-  <img src="docs/screenshot-profile-shipper.png" width="220" />
+  <img src="docs/screenshot-home-shipper.png" width="250" />
+  <img src="docs/screenshot-menu-shipper.png" width="250" />
+  <img src="docs/screenshot-money-shipper.png" width="250" />
 </p>
 
-<!-- Row 5: Auth / Other -->
 <p align="center">
-  <img src="docs/screenshot-login.png" width="220" />
-  <img src="docs/screenshot-category.png" width="220" />
-  <img src="docs/screenshot-product-detail.png" width="220" />
-  <img src="docs/screenshot-hotline.png" width="220" />
+  <img src="docs/screenshot-profile-shipper.png" width="250" />
+  <img src="docs/screenshot-login.png" width="250" />
 </p>
 
 ## 📫 Contact
