@@ -150,56 +150,51 @@ Payment flows are demo only and not integrated with real payment gateways. Do no
 
 🖼 Screenshots / UI mockups
 ---
-<!-- User -->
 <p align="center">
-  <img src="docs/screenshot-home-user.png" width="250" />
-  <img src="docs/screenshot-category.png" width="250" />
-  <img src="docs/screenshot-search.png" width="250" />
+  <img src="docs/screenshot-cart.png" width="240" />
+  <img src="docs/screenshot-category.png" width="240" />
+  <img src="docs/screenshot-category-merchant.png" width="240" />
 </p>
 
 <p align="center">
-  <img src="docs/screenshot-store-detail.png" width="250" />
-  <img src="docs/screenshot-info-store-detail.png" width="250" />
-  <img src="docs/screenshot-product-detail.png" width="250" />
+  <img src="docs/screenshot-checkout.png" width="240" />
+  <img src="docs/screenshot-detail-merchant.png" width="240" />
+  <img src="docs/screenshot-home-user.png" width="240" />
 </p>
 
 <p align="center">
-  <img src="docs/screenshot-cart.png" width="250" />
-  <img src="docs/screenshot-checkout.png" width="250" />
-  <img src="docs/screenshot-order-1.png" width="250" />
+  <img src="docs/screenshot-home-shipper.png" width="240" />
+  <img src="docs/screenshot-hotline.png" width="240" />
+  <img src="docs/screenshot-info-store-detail.png" width="240" />
 </p>
 
 <p align="center">
-  <img src="docs/screenshot-like.png" width="250" />
-  <img src="docs/screenshot-profile.png" width="250" />
-  <img src="docs/screenshot-login.png" width="250" />
+  <img src="docs/screenshot-like.png" width="240" />
+  <img src="docs/screenshot-login.png" width="240" />
+  <img src="docs/screenshot-menu-shipper.png" width="240" />
 </p>
 
 <p align="center">
-  <img src="docs/screenshot-hotline.png" width="250" />
-</p>
-
-<!-- Merchant -->
-<p align="center">
-  <img src="docs/screenshot-merchant-dashboard.png" width="250" />
-  <img src="docs/screenshot-category-merchant.png" width="250" />
-  <img src="docs/screenshot-detail-merchant.png" width="250" />
+  <img src="docs/screenshot-merchant-dashboard.png" width="240" />
+  <img src="docs/screenshot-money.png" width="240" />
+  <img src="docs/screenshot-money-shipper.png" width="240" />
 </p>
 
 <p align="center">
-  <img src="docs/screenshot-product-merchant.png" width="250" />
-  <img src="docs/screenshot-profile-merchant.png" width="250" />
-</p>
-
-<!-- Shipper -->
-<p align="center">
-  <img src="docs/screenshot-home-shipper.png" width="250" />
-  <img src="docs/screenshot-menu-shipper.png" width="250" />
-  <img src="docs/screenshot-money-shipper.png" width="250" />
+  <img src="docs/screenshot-order-1.png" width="240" />
+  <img src="docs/screenshot-product-detail.png" width="240" />
+  <img src="docs/screenshot-product-merchant.png" width="240" />
 </p>
 
 <p align="center">
-  <img src="docs/screenshot-profile-shipper.png" width="250" />
+  <img src="docs/screenshot-profile.png" width="240" />
+  <img src="docs/screenshot-profile-merchant.png" width="240" />
+  <img src="docs/screenshot-profile-shipper.png" width="240" />
+</p>
+
+<p align="center">
+  <img src="docs/screenshot-search.png" width="240" />
+  <img src="docs/screenshot-store-detail.png" width="240" />
 </p>
 
 ## 📫 Contact
