@@ -138,7 +138,6 @@ Note: These instructions are for development environments.
 
 ## 🗄 Database
 PostgreSQL is used for persistent storage. The backend models include users, roles, stores, menus, orders, and delivery records. Use Django admin or migrations to manage schema.
----
 
 ## 💳 Payments
 Payment flows are demo only and not integrated with real payment gateways. Do not use demo payment logic in production.
