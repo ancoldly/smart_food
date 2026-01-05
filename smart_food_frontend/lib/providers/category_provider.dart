@@ -6,11 +6,9 @@ import 'package:smart_food_frontend/data/services/category_service.dart';
 
 class CategoryProvider with ChangeNotifier {
   List<CategoryModel> _categories = [];
-  List<CategoryModel> _adminCategories = [];
   CategoryModel? _selectedCategory;
 
   List<CategoryModel> get categories => _categories;
-  List<CategoryModel> get adminCategories => _adminCategories;
   CategoryModel? get selectedCategory => _selectedCategory;
 
   bool _loading = false;
@@ -22,17 +20,6 @@ class CategoryProvider with ChangeNotifier {
     notifyListeners();
 
     _categories = await CategoryService.fetchCategories();
-
-    _loading = false;
-    notifyListeners();
-  }
-
-  // Admin: load all categories
-  Future<void> loadCategoriesAdmin() async {
-    _loading = true;
-    notifyListeners();
-
-    _adminCategories = await CategoryService.fetchCategoriesAdmin();
 
     _loading = false;
     notifyListeners();

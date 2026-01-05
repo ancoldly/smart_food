@@ -162,7 +162,7 @@ class AuthProvider with ChangeNotifier {
 
     if (role == "shipper") {
       // ignore: use_build_context_synchronously
-      Navigator.pushReplacementNamed(context, AppRoutes.main);
+      Navigator.pushReplacementNamed(context, AppRoutes.shipperHome);
       return;
     }
   }

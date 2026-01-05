@@ -4,6 +4,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:smart_food_frontend/presentation/screens/client/home_screen.dart';
 import 'package:smart_food_frontend/presentation/screens/client/profile_screen.dart';
 import 'package:smart_food_frontend/presentation/screens/client/favorite_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/client/orders_screen.dart';
 
 class MainBottomNav extends StatefulWidget {
   final int initialIndex;
@@ -25,7 +26,7 @@ class _MainBottomNavState extends State<MainBottomNav> {
 
   final List<Widget> _screens = const [
     HomeScreen(),
-    HomeScreen(),
+    OrdersScreen(),
     FavoriteScreen(),
     ProfileScreen(),
   ];

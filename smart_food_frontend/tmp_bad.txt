@@ -1,0 +1,14 @@
+24:   Timer? _notifTimer;
+46:     _notifTimer?.cancel();
+56:     _notifTimer?.cancel();
+87:                       store?.address ?? 'Chưa có địa chỉ',
+122:                               ? Container(
+177:                           (store?.status == 4)
+178:                               ? "Đang đóng cửa"
+181:                             color: (store?.status == 4)
+182:                                 ? Colors.red
+191:                       value: store?.status != 4,
+194:                           ? null
+195:                           : (_) => _toggleStoreStatus(store?.id),
+543:   Future<void> _toggleStoreStatus(int? storeId) async {
+558:   final VoidCallback? onTap;

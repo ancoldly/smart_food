@@ -26,24 +26,6 @@ class CategoryService {
     return [];
   }
 
-  // Admin: list all categories in system
-  static Future<List<CategoryModel>> fetchCategoriesAdmin() async {
-    final res = await ApiClient.send((token) {
-      return http.get(
-        Uri.parse("$baseUrl/admin/all/"),
-        headers: {"Authorization": "Bearer $token"},
-      );
-    });
-
-    if (res.statusCode == 200) {
-      final decoded = utf8.decode(res.bodyBytes);
-      final List data = jsonDecode(decoded);
-      return data.map((e) => CategoryModel.fromJson(e)).toList();
-    }
-
-    return [];
-  }
-
   // Get one category
   static Future<CategoryModel?> fetchCategory(int id) async {
     final res = await ApiClient.send((token) {

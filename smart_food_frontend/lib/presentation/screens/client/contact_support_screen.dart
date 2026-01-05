@@ -87,9 +87,7 @@ class ContactSupportScreen extends StatelessWidget {
               title: "Chat trực tuyến",
               subtitle: "Phản hồi trong vài phút",
               color: const Color(0xFF3E613D),
-              onTap: () {
-                // TODO: Điều hướng tới chat/support webview nếu có
-              },
+              onTap: () {},
             ),
             _contactTile(
               context,
@@ -97,9 +95,7 @@ class ContactSupportScreen extends StatelessWidget {
               title: "Gọi hotline",
               subtitle: "1900 636 736 (8h - 22h)",
               color: const Color(0xFFFB6D3A),
-              onTap: () {
-                // TODO: Mở dialer
-              },
+              onTap: () {},
             ),
             _contactTile(
               context,
@@ -107,9 +103,7 @@ class ContactSupportScreen extends StatelessWidget {
               title: "Gửi email",
               subtitle: "support@smartfood.com",
               color: const Color(0xFF3A86FF),
-              onTap: () {
-                // TODO: Mở mail app
-              },
+              onTap: () {},
             ),
             const SizedBox(height: 16),
             Container(
@@ -126,9 +120,9 @@ class ContactSupportScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     "Câu hỏi thường gặp",
                     style: TextStyle(

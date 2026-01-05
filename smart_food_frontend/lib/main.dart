@@ -21,6 +21,17 @@ import 'package:smart_food_frontend/providers/store_tag_provider.dart';
 import 'package:smart_food_frontend/providers/favorite_provider.dart';
 import 'package:smart_food_frontend/providers/store_menu_provider.dart';
 import 'package:smart_food_frontend/providers/store_hours_provider.dart';
+import 'package:smart_food_frontend/providers/cart_provider.dart';
+import 'package:smart_food_frontend/providers/product_option_provider.dart';
+import 'package:smart_food_frontend/providers/shipper_provider.dart';
+import 'package:smart_food_frontend/providers/order_provider.dart';
+import 'package:smart_food_frontend/providers/notification_provider.dart';
+import 'package:smart_food_frontend/providers/merchant_order_provider.dart';
+import 'package:smart_food_frontend/providers/shipper_order_provider.dart';
+import 'package:smart_food_frontend/providers/earnings_provider.dart';
+import 'package:smart_food_frontend/providers/leaderboard_provider.dart';
+import 'package:smart_food_frontend/providers/review_provider.dart';
+import 'package:smart_food_frontend/providers/merchant_review_provider.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -56,6 +67,17 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => FavoriteProvider()),
         ChangeNotifierProvider(create: (_) => StoreMenuProvider()),
         ChangeNotifierProvider(create: (_) => StoreHoursProvider()),
+        ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => ProductOptionProvider()),
+        ChangeNotifierProvider(create: (_) => ShipperProvider()),
+        ChangeNotifierProvider(create: (_) => OrderProvider()),
+        ChangeNotifierProvider(create: (_) => NotificationProvider()),
+        ChangeNotifierProvider(create: (_) => MerchantOrderProvider()),
+        ChangeNotifierProvider(create: (_) => ShipperOrderProvider()),
+        ChangeNotifierProvider(create: (_) => EarningsProvider()),
+        ChangeNotifierProvider(create: (_) => LeaderboardProvider()),
+        ChangeNotifierProvider(create: (_) => ReviewProvider()),
+        ChangeNotifierProvider(create: (_) => MerchantReviewProvider()),
       ],
       child: MaterialApp(
         navigatorKey: navigatorKey,      

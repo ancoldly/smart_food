@@ -5,6 +5,9 @@ from rest_framework.views import APIView
 from users.permissions import IsAdminRole
 
 from .models import User
+from stores.models import Store
+from shippers.models import Shipper
+from vouchers.models import Voucher
 from .serializers import ChangePasswordSerializer, RegisterSerializer, UpdateProfileSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView # type: ignore
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer # type: ignore
@@ -141,4 +144,21 @@ class AdminUserListView(APIView):
             for u in users
         ]
 
+        return Response(data, status=200)
+
+
+class AdminStatsView(APIView):
+    """
+    Thống kê nhanh cho dashboard admin.
+    """
+
+    permission_classes = [IsAdminRole]
+
+    def get(self, request):
+        data = {
+            "users_total": User.objects.exclude(role="admin").count(),
+            "merchants_total": Store.objects.filter(status=2).count(),
+            "shippers_total": Shipper.objects.filter(status=2).count(),
+            "vouchers_total": Voucher.objects.count(),
+        }
         return Response(data, status=200)

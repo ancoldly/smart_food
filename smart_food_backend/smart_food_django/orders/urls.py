@@ -1,0 +1,36 @@
+from django.urls import path
+from .views import (
+    OrderListCreateView,
+    OrderDetailView,
+    MerchantOrderListView,
+    MerchantOrderDetailUpdateView,
+    MerchantRevenueView,
+    ShipperAvailableOrdersView,
+    ShipperMyOrdersView,
+    ShipperAcceptView,
+    ShipperCompleteView,
+    ShipperRevenueView,
+    ShipperLeaderboardView,
+    ReviewView,
+    ReorderView,
+    MerchantReviewListView,
+    ReviewReplyView,
+)
+
+urlpatterns = [
+    path("", OrderListCreateView.as_view()),
+    path("<int:pk>/", OrderDetailView.as_view()),
+    path("merchant/", MerchantOrderListView.as_view()),
+    path("merchant/<int:pk>/", MerchantOrderDetailUpdateView.as_view()),
+    path("merchant/earnings/", MerchantRevenueView.as_view()),
+    path("shipper/available/", ShipperAvailableOrdersView.as_view()),
+    path("shipper/", ShipperMyOrdersView.as_view()),
+    path("shipper/<int:pk>/accept/", ShipperAcceptView.as_view()),
+    path("shipper/<int:pk>/complete/", ShipperCompleteView.as_view()),
+    path("shipper/earnings/", ShipperRevenueView.as_view()),
+    path("shipper/leaderboard/", ShipperLeaderboardView.as_view()),
+    path("<int:pk>/reorder/", ReorderView.as_view()),
+    path("reviews/", ReviewView.as_view()),
+    path("reviews/merchant/", MerchantReviewListView.as_view()),
+    path("reviews/<int:pk>/reply/", ReviewReplyView.as_view()),
+]

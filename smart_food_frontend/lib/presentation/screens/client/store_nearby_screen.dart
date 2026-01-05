@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:smart_food_frontend/core/utils/location_utils.dart';
 import 'package:smart_food_frontend/core/utils/store_badge_utils.dart';
 import 'package:smart_food_frontend/data/models/store_model.dart';
+import 'package:smart_food_frontend/data/services/recommendation_service.dart';
 import 'package:smart_food_frontend/presentation/routes/app_routes.dart';
 import 'package:smart_food_frontend/presentation/widgets/store_list_item.dart';
 import 'package:smart_food_frontend/providers/address_provider.dart';
@@ -80,7 +81,6 @@ class _StoreNearbyScreenState extends State<StoreNearbyScreen> {
                   }
 
                   final nearby = _buildNearby(provider.stores, userLat, userLng);
-
                   if (nearby.isEmpty) {
                     return const Center(
                       child: Padding(

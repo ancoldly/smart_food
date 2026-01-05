@@ -74,18 +74,6 @@ class CategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 
 # =============================
-# ADMIN: LIST ALL CATEGORIES
-# =============================
-class AdminCategoryListView(APIView):
-    permission_classes = [permissions.IsAdminUser]
-
-    def get(self, request):
-        categories = Category.objects.all().order_by("-created_at")
-        serializer = CategorySerializer(categories, many=True, context={"request": request})
-        return Response(serializer.data, status=200)
-
-
-# =============================
 # PUBLIC: LIST CATEGORY BY STORE
 # =============================
 class PublicCategoryByStoreView(APIView):

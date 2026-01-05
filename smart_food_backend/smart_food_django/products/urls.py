@@ -14,6 +14,8 @@ from .views import (
     OptionTemplateDetailView,
     ProductOptionGroupListCreateView,
     ProductOptionGroupDetailView,
+    PublicOptionGroupByProductView,
+    PublicProductOptionsView,
 )
 
 urlpatterns = [
@@ -22,6 +24,8 @@ urlpatterns = [
     path("<int:pk>/", ProductDetailView.as_view(), name="product-detail"),
     path("admin/all/", AdminProductListView.as_view(), name="admin-product-list"),
     path("public/<int:store_id>/", PublicProductByStoreView.as_view(), name="product-public-by-store"),
+    path("public/<int:product_id>/options/", PublicProductOptionsView.as_view(), name="product-options-public"),
+    path("public/<int:product_id>/option-groups/", PublicOptionGroupByProductView.as_view(), name="option-group-public-by-product"),
 
     # Option groups
     path("option-groups/", OptionGroupListCreateView.as_view(), name="option-group-list-create"),

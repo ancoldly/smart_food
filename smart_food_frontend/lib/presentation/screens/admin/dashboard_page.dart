@@ -1,19 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:smart_food_frontend/data/services/admin_service.dart';
 import 'package:smart_food_frontend/presentation/routes/app_routes.dart';
 import 'package:smart_food_frontend/providers/auth_provider.dart';
 
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
+
+  @override
+  State<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  bool loading = false;
+  Map<String, dynamic> stats = {
+    "users_total": 0,
+    "merchants_total": 0,
+    "shippers_total": 0,
+    "vouchers_total": 0,
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStats();
+  }
+
+  Future<void> _loadStats() async {
+    setState(() => loading = true);
+    final data = await AdminService.fetchStats();
+    setState(() {
+      stats = {
+        "users_total": data["users_total"] ?? 0,
+        "merchants_total": data["merchants_total"] ?? 0,
+        "shippers_total": data["shippers_total"] ?? 0,
+        "vouchers_total": data["vouchers_total"] ?? 0,
+      };
+      loading = false;
+    });
+  }
 
   Future<void> _logout(BuildContext context) async {
     final auth = Provider.of<AuthProvider>(context, listen: false);
-
     await auth.logout();
     if (!context.mounted) return;
-
     Navigator.pushReplacementNamed(context, AppRoutes.login);
-
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text("Đã đăng xuất")),
     );
@@ -22,34 +53,39 @@ class DashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFFFF6EC),
       appBar: AppBar(
-        title: const Text("Dashboard"),
-        centerTitle: true,
+        backgroundColor: const Color(0xFFFFF6EC),
+        elevation: 0,
         automaticallyImplyLeading: false,
+        title: const Text(
+          "Dashboard",
+          style: TextStyle(
+            color: Color(0xFF5B7B56),
+            fontWeight: FontWeight.w700,
+          ),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
+            icon: const Icon(Icons.refresh, color: Color(0xFF5B7B56)),
+            onPressed: _loadStats,
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout, color: Color(0xFF5B7B56)),
             onPressed: () => _logout(context),
           )
         ],
       ),
-
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
-            //───────────────────────────────
-            //        QUICK MENU
-            //───────────────────────────────
-
             const Text(
               "Quick Menu",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-
             GridView.count(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -78,21 +114,10 @@ class DashboardPage extends StatelessWidget {
                   label: "Shippers",
                   onTap: () => Navigator.pushNamed(context, AppRoutes.shippersAll),
                 ),
-                
                 _menuItem(
                   icon: Icons.delivery_dining,
                   label: "Shippers Pending",
                   onTap: () => Navigator.pushNamed(context, AppRoutes.shippersPending),
-                ),
-                _menuItem(
-                  icon: Icons.receipt_long,
-                  label: "Orders",
-                  onTap: () => Navigator.pushNamed(context, AppRoutes.ordersPage),
-                ),
-                _menuItem(
-                  icon: Icons.category,
-                  label: "Categories",
-                  onTap: () => Navigator.pushNamed(context, AppRoutes.categoriesPage),
                 ),
                 _menuItem(
                   icon: Icons.local_offer,
@@ -103,11 +128,11 @@ class DashboardPage extends StatelessWidget {
             ),
 
             const SizedBox(height: 30),
-
-            //───────────────────────────────
-            //         DASHBOARD STATS
-            //───────────────────────────────
-
+            const Text(
+              "Overview",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
             GridView.count(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -115,39 +140,31 @@ class DashboardPage extends StatelessWidget {
               crossAxisSpacing: 14,
               mainAxisSpacing: 14,
               childAspectRatio: 1.2,
-              children: const [
-                _StatCard(title: "Total Users", value: "1200", color: Colors.blue),
-                _StatCard(title: "Merchants", value: "85", color: Colors.green),
-                _StatCard(title: "Shippers", value: "40", color: Colors.orange),
-                _StatCard(title: "Orders Today", value: "230", color: Colors.red),
+              children: [
+                _StatCard(
+                    title: "Users",
+                    value: loading ? "..." : "${stats["users_total"]}",
+                    color: Colors.blue),
+                _StatCard(
+                    title: "Merchants",
+                    value: loading ? "..." : "${stats["merchants_total"]}",
+                    color: Colors.green),
+                _StatCard(
+                    title: "Shippers",
+                    value: loading ? "..." : "${stats["shippers_total"]}",
+                    color: Colors.orange),
+                _StatCard(
+                    title: "Vouchers",
+                    value: loading ? "..." : "${stats["vouchers_total"]}",
+                    color: Colors.purple),
               ],
             ),
-
-            const SizedBox(height: 30),
-
-            //───────────────────────────────
-            //          RECENT ORDERS
-            //───────────────────────────────
-
-            const Text(
-              "Recent Orders",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-
-            _orderCard("#1001", "Nguyen Van A", "Bún bò", "Completed"),
-            _orderCard("#1002", "Tran Thi B", "Trà sữa", "Preparing"),
-            _orderCard("#1003", "Le Van C", "Cơm gà", "Pending"),
-            _orderCard("#1004", "Pham Minh D", "Pizza", "Canceled"),
           ],
         ),
       ),
     );
   }
 
-  //────────────────────────────────────────
-  //          QUICK MENU ITEM
-  //────────────────────────────────────────
   Widget _menuItem({
     required IconData icon,
     required String label,
@@ -158,8 +175,15 @@ class DashboardPage extends StatelessWidget {
       borderRadius: BorderRadius.circular(16),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.grey.shade100,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            )
+          ],
         ),
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -177,64 +201,8 @@ class DashboardPage extends StatelessWidget {
       ),
     );
   }
-
-  //────────────────────────────────────────
-  //          ORDER CARD (LIST ITEM)
-  //────────────────────────────────────────
-  Widget _orderCard(String id, String user, String item, String status) {
-    Color statusColor;
-
-    switch (status) {
-      case "Completed":
-        statusColor = Colors.green;
-        break;
-      case "Preparing":
-        statusColor = Colors.orange;
-        break;
-      case "Pending":
-        statusColor = Colors.blue;
-        break;
-      case "Canceled":
-        statusColor = Colors.red;
-        break;
-      default:
-        statusColor = Colors.grey;
-    }
-
-    return Card(
-      elevation: 3,
-      margin: const EdgeInsets.only(bottom: 14),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(16),
-        title: Text(
-          id,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Customer: $user"),
-            Text("Item: $item"),
-            const SizedBox(height: 6),
-            Chip(
-              label: Text(status),
-              backgroundColor: statusColor.withOpacity(0.15),
-              labelStyle: TextStyle(
-                color: statusColor,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
-//────────────────────────────────────────
-//               STAT CARD
-//────────────────────────────────────────
 class _StatCard extends StatelessWidget {
   final String title;
   final String value;

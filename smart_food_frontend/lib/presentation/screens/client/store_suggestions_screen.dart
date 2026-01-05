@@ -3,11 +3,13 @@ import 'package:provider/provider.dart';
 import 'package:smart_food_frontend/core/utils/location_utils.dart';
 import 'package:smart_food_frontend/core/utils/store_badge_utils.dart';
 import 'package:smart_food_frontend/data/models/store_model.dart';
+import 'package:smart_food_frontend/data/services/recommendation_service.dart';
 import 'package:smart_food_frontend/presentation/widgets/store_list_item.dart';
 import 'package:smart_food_frontend/presentation/routes/app_routes.dart';
 import 'package:smart_food_frontend/providers/address_provider.dart';
 import 'package:smart_food_frontend/providers/store_provider.dart';
 import 'package:smart_food_frontend/providers/user_provider.dart';
+import 'package:smart_food_frontend/providers/favorite_provider.dart';
 
 class StoreSuggestionsScreen extends StatefulWidget {
   const StoreSuggestionsScreen({super.key});
@@ -18,6 +20,8 @@ class StoreSuggestionsScreen extends StatefulWidget {
 
 class _StoreSuggestionsScreenState extends State<StoreSuggestionsScreen> {
   bool _loading = true;
+  bool _nearOnly = false;
+  bool _favOnly = false;
 
   @override
   void initState() {
@@ -29,11 +33,13 @@ class _StoreSuggestionsScreenState extends State<StoreSuggestionsScreen> {
     final storeP = Provider.of<StoreProvider>(context, listen: false);
     final userP = Provider.of<UserProvider>(context, listen: false);
     final addressP = Provider.of<AddressProvider>(context, listen: false);
+    final favP = Provider.of<FavoriteProvider>(context, listen: false);
 
     await Future.wait([
       if (storeP.stores.isEmpty) storeP.loadStoresPublic(),
       if (userP.user == null) userP.loadUserProfile(),
       if (addressP.addresses.isEmpty) addressP.loadAddresses(),
+      favP.loadFavorites(),
     ]);
 
     if (mounted) {
@@ -60,7 +66,7 @@ class _StoreSuggestionsScreenState extends State<StoreSuggestionsScreen> {
         centerTitle: true,
         iconTheme: const IconThemeData(color: Color(0xFF5B7B56)),
         title: const Text(
-          "Có thể bạn sẽ thích",
+          "Có thể bạn sẽ thích?",
           style: TextStyle(
             color: Color(0xFF5B7B56),
             fontWeight: FontWeight.w700,
@@ -72,6 +78,7 @@ class _StoreSuggestionsScreenState extends State<StoreSuggestionsScreen> {
         child: Column(
           children: [
             _suggestionCard(),
+            _filterRow(),
             Expanded(
               child: Consumer<StoreProvider>(
                 builder: (context, provider, _) {
@@ -79,8 +86,8 @@ class _StoreSuggestionsScreenState extends State<StoreSuggestionsScreen> {
                     return const Center(child: CircularProgressIndicator());
                   }
 
-                  final suggestions = _buildSuggestions(provider.stores);
-
+                  final suggestions =
+                      _buildSuggestions(provider.stores, userLat, userLng);
                   if (suggestions.isEmpty) {
                     return const Center(
                       child: Padding(
@@ -126,9 +133,23 @@ class _StoreSuggestionsScreenState extends State<StoreSuggestionsScreen> {
     );
   }
 
-  List<StoreModel> _buildSuggestions(List<StoreModel> stores) {
+  List<StoreModel> _buildSuggestions(
+      List<StoreModel> stores, double? userLat, double? userLng) {
     if (stores.isEmpty) return [];
-    final newestSorted = List<StoreModel>.from(stores)
+    final favIds =
+        Provider.of<FavoriteProvider>(context, listen: false).favoriteStoreIds;
+    var filtered = stores;
+    if (_favOnly) {
+      filtered = filtered.where((s) => favIds.contains(s.id)).toList();
+    }
+    if (_nearOnly && userLat != null && userLng != null) {
+      filtered = filtered.where((s) {
+        final d = distanceFromUser(s, userLat, userLng);
+        return d != null && d <= 5;
+      }).toList();
+    }
+
+    final newestSorted = List<StoreModel>.from(filtered)
       ..sort((a, b) => b.id.compareTo(a.id));
     return _take(newestSorted, start: 0, count: 12);
   }
@@ -169,8 +190,7 @@ class _StoreSuggestionsScreenState extends State<StoreSuggestionsScreen> {
           ),
           SizedBox(height: 6),
           Text(
-            "Những món bạn còn đang đỡ, hãy thử ngay nào!\n"
-            "Tâm hồn sẽ được chữa lành khi được thỏa thích ăn những gì mình muốn.",
+            "Những món ăn bạn có thể thích, hãy thử ngay nào!\nTâm hồn sẽ được chữa lành khi ta được thoả thích ăn những gì mình muốn, yeah...",
             style: TextStyle(
               color: Colors.black87,
               height: 1.4,
@@ -180,8 +200,49 @@ class _StoreSuggestionsScreenState extends State<StoreSuggestionsScreen> {
       ),
     );
   }
+
+  Widget _filterRow() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+      child: Row(
+        children: [
+          _filterChip("Lọc theo", false, () {}),
+          const SizedBox(width: 8),
+          _filterChip("Gần tôi", _nearOnly, () {
+            setState(() => _nearOnly = !_nearOnly);
+          }),
+          const SizedBox(width: 8),
+          _filterChip("Yêu thích", _favOnly, () {
+            setState(() => _favOnly = !_favOnly);
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _filterChip(String label, bool selected, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color:
+              selected ? const Color(0xFF1F7A52).withOpacity(0.12) : const Color(0xFFF6EDE2),
+          border: Border.all(
+              color:
+                  selected ? const Color(0xFF1F7A52) : const Color(0xFFE0D5C8)),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: selected ? const Color(0xFF1F7A52) : Colors.black87,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
+    );
+  }
 }
-
-
-
-

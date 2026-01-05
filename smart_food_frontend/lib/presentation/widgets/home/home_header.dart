@@ -9,6 +9,8 @@ class HomeHeader extends StatelessWidget {
   final TextEditingController? searchController;
   final ValueChanged<String>? onSearchSubmitted;
   final VoidCallback? onSearchTap;
+  final VoidCallback? onNotificationTap;
+  final int unreadCount;
 
   const HomeHeader({
     super.key,
@@ -18,6 +20,8 @@ class HomeHeader extends StatelessWidget {
     this.searchController,
     this.onSearchSubmitted,
     this.onSearchTap,
+    this.onNotificationTap,
+    this.unreadCount = 0,
   });
 
   @override
@@ -78,6 +82,48 @@ class HomeHeader extends StatelessWidget {
                   ],
                 ),
               ),
+              const SizedBox(width: 10),
+              InkWell(
+                onTap: onNotificationTap,
+                borderRadius: BorderRadius.circular(12),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.notifications_none,
+                        color: Color(0xFFFF7043),
+                      ),
+                    ),
+                    if (unreadCount > 0)
+                      Positioned(
+                        right: -2,
+                        top: -2,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            unreadCount.toString(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 12),
@@ -104,7 +150,7 @@ class HomeHeader extends StatelessWidget {
                             readOnly: true,
                             controller: searchController,
                             decoration: const InputDecoration(
-                              hintText: "Hôm nay bạn muốn ăn, uống gì nào?",
+                              hintText: "Hôm nay bạn muốn ăn uống gì?",
                               border: InputBorder.none,
                             ),
                             onTap: onSearchTap,

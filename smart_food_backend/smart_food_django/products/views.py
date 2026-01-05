@@ -24,6 +24,88 @@ from .serializers import (
 )
 
 
+class PublicOptionGroupByProductView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, product_id):
+        qs = OptionGroup.objects.filter(
+            product_id=product_id, product__is_available=True
+        ).order_by("position", "-created_at")
+        serializer = OptionGroupSerializer(qs, many=True)
+        return Response(serializer.data, status=200)
+
+
+class PublicProductOptionsView(APIView):
+    """
+    Trả về tất cả option groups cho product:
+    - OptionGroup riêng của product.
+    - OptionGroupTemplate được gán qua ProductOptionGroup (có override is_required, max_select).
+    Output schema khớp OptionGroupSerializer để frontend dùng chung.
+    """
+
+    permission_classes = [AllowAny]
+
+    def get(self, request, product_id):
+        try:
+            product = Product.objects.get(pk=product_id, is_available=True)
+        except Product.DoesNotExist:
+            return Response({"detail": "Not found"}, status=404)
+
+        groups = []
+
+        # Option groups riêng
+        og_qs = OptionGroup.objects.filter(product=product).order_by(
+            "position", "-created_at"
+        )
+        groups.extend(OptionGroupSerializer(og_qs, many=True).data)
+
+        # Option template gán qua mapping
+        pog_qs = (
+            ProductOptionGroup.objects.filter(product=product)
+            .select_related("option_group_template")
+            .prefetch_related("option_group_template__options")
+            .order_by("position", "-created_at")
+        )
+
+        for link in pog_qs:
+            tpl = link.option_group_template
+            synthetic_id = -tpl.id  # tránh đụng OptionGroup id thật
+
+            data = {
+                "id": synthetic_id,
+                "product": product.id,
+                "name": tpl.name,
+                "is_required": link.is_required
+                if link.is_required is not None
+                else tpl.is_required,
+                "max_select": link.max_select
+                if link.max_select is not None
+                else tpl.max_select,
+                "position": link.position,
+                "created_at": tpl.created_at,
+                "updated_at": tpl.updated_at,
+                "options": [],
+            }
+
+            for opt in tpl.options.all().order_by("position", "-created_at"):
+                data["options"].append(
+                    {
+                        "id": opt.id,
+                        "option_group": synthetic_id,
+                        "name": opt.name,
+                        "price": opt.price,
+                        "position": opt.position,
+                        "created_at": opt.created_at,
+                        "updated_at": opt.updated_at,
+                    }
+                )
+
+            groups.append(data)
+
+        groups.sort(key=lambda g: g.get("position", 0))
+        return Response(groups, status=200)
+
+
 # =====================================
 #              PRODUCTS
 # =====================================

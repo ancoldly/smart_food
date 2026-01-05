@@ -1,6 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+
 import 'package:provider/provider.dart';
+
 import 'package:smart_food_frontend/presentation/routes/app_routes.dart';
+
+import 'package:smart_food_frontend/presentation/screens/merchant/notifications_screen.dart';
+
+import 'package:smart_food_frontend/providers/notification_provider.dart';
+
 import 'package:smart_food_frontend/providers/store_provider.dart';
 
 class MerchantHomeScreen extends StatefulWidget {
@@ -13,23 +22,50 @@ class MerchantHomeScreen extends StatefulWidget {
 class _MerchantHomeScreenState extends State<MerchantHomeScreen> {
   bool _toggleLoading = false;
 
+  Timer? _notifTimer;
+
   @override
   void initState() {
     super.initState();
+
     Future.microtask(() async {
-      final sp = Provider.of<StoreProvider>(context, listen: false);
+      final sp = context.read<StoreProvider>();
+      final notifP = context.read<NotificationProvider>();
+
       await sp.loadMyStore();
       await sp.loadStoreCampaigns();
       await sp.loadStoreVouchers();
+      await notifP.refreshUnreadCount();
+
+      if (mounted) {
+        _startPolling();
+      }
     });
+  }
+
+  void _startPolling() {
+    _notifTimer?.cancel();
+
+    _notifTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+      Provider.of<NotificationProvider>(context, listen: false)
+          .refreshUnreadCount();
+    });
+  }
+
+  @override
+  void dispose() {
+    _notifTimer?.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final storeProvider = Provider.of<StoreProvider>(context);
+
     final store = storeProvider.myStore;
     final campaigns = storeProvider.campaigns;
     final vouchers = storeProvider.storeVouchers;
+
     final activeCampaigns = campaigns.where((c) => c.isActive).length;
     final activeVouchers = vouchers.where((v) => v.isActive).length;
 
@@ -40,6 +76,7 @@ class _MerchantHomeScreenState extends State<MerchantHomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              /// HEADER
               Row(
                 children: [
                   const SizedBox(width: 6),
@@ -58,12 +95,57 @@ class _MerchantHomeScreenState extends State<MerchantHomeScreen> {
                     ),
                   ),
                   const SizedBox(width: 6),
-                  const Icon(Icons.notifications_none, size: 28),
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.notifications_none, size: 28),
+                        onPressed: () async {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const NotificationsScreen(),
+                            ),
+                          ).then(
+                            (_) => Provider.of<NotificationProvider>(
+                              context,
+                              listen: false,
+                            ).refreshUnreadCount(),
+                          );
+                        },
+                      ),
+                      Positioned(
+                        right: 6,
+                        top: 6,
+                        child: Consumer<NotificationProvider>(
+                          builder: (_, np, __) => (np.unreadCount) > 0
+                              ? Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Text(
+                                    np.unreadCount.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox.shrink(),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
 
               const SizedBox(height: 12),
 
+              /// STORE STATUS
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
@@ -92,7 +174,8 @@ class _MerchantHomeScreenState extends State<MerchantHomeScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          (store?.status == 4) ? "Đang đóng cửa" : "Đang mở cửa",
+                          (store?.status == 4)
+                              ? "Đang đóng cửa" : "Đang mở cửa",
                           style: TextStyle(
                             color: (store?.status == 4)
                                 ? Colors.red
@@ -248,14 +331,11 @@ class _MerchantHomeScreenState extends State<MerchantHomeScreen> {
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
                   _MenuItem(
-                    icon: Icons.receipt_long,
-                    label: "Đơn hàng",
-                    onTap: () {},
-                  ),
-                  _MenuItem(
-                    icon: Icons.star_border,
+                    icon: Icons.reviews,
                     label: "Phản hồi",
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.merchantReviews);
+                    },
                   ),
                   _MenuItem(
                     icon: Icons.group,
@@ -288,7 +368,9 @@ class _MerchantHomeScreenState extends State<MerchantHomeScreen> {
                   _MenuItem(
                     icon: Icons.bar_chart,
                     label: "Thống kê",
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.merchantFinance);
+                    },
                   ),
                 ],
               ),
@@ -410,7 +492,7 @@ class _MerchantHomeScreenState extends State<MerchantHomeScreen> {
                             ),
                             const SizedBox(height: 6),
                             const Text(
-                              "Đối với đối tác cá nhân kinh doanh",
+                              "Dành cho đối tác cá nhân kinh doanh",
                               style: TextStyle(fontSize: 13),
                               textAlign: TextAlign.center,
                             ),
@@ -439,7 +521,7 @@ class _MerchantHomeScreenState extends State<MerchantHomeScreen> {
                             ),
                             const SizedBox(height: 6),
                             const Text(
-                              "Đối với doanh nghiệp kinh doanh",
+                              "Dành cho doanh nghiệp kinh doanh",
                               style: TextStyle(fontSize: 13),
                               textAlign: TextAlign.center,
                             ),
@@ -449,7 +531,7 @@ class _MerchantHomeScreenState extends State<MerchantHomeScreen> {
                     ),
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),
@@ -459,9 +541,12 @@ class _MerchantHomeScreenState extends State<MerchantHomeScreen> {
 
   Future<void> _toggleStoreStatus(int? storeId) async {
     if (storeId == null) return;
+
     setState(() => _toggleLoading = true);
+
     await Provider.of<StoreProvider>(context, listen: false)
         .toggleStore(storeId);
+
     setState(() => _toggleLoading = false);
   }
 }

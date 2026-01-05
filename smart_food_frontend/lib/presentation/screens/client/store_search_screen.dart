@@ -4,9 +4,11 @@ import 'package:smart_food_frontend/core/utils/location_utils.dart';
 import 'package:smart_food_frontend/core/utils/store_badge_utils.dart';
 import 'package:smart_food_frontend/data/models/store_model.dart';
 import 'package:smart_food_frontend/data/services/store_service.dart';
+import 'package:smart_food_frontend/data/services/recommendation_service.dart';
 import 'package:smart_food_frontend/presentation/routes/app_routes.dart';
 import 'package:smart_food_frontend/presentation/widgets/store_list_item.dart';
 import 'package:smart_food_frontend/providers/address_provider.dart';
+import 'package:smart_food_frontend/providers/favorite_provider.dart';
 
 class StoreSearchScreen extends StatefulWidget {
   final String keyword;
@@ -18,9 +20,18 @@ class StoreSearchScreen extends StatefulWidget {
 
 class _StoreSearchScreenState extends State<StoreSearchScreen> {
   bool _nearOnly = false;
+  bool _favOnly = false;
 
   Future<List<StoreModel>> _load() {
     return StoreService.fetchStoresByKeyword(keyword: widget.keyword);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(
+      () => context.read<FavoriteProvider>().loadFavorites(),
+    );
   }
 
   @override
@@ -55,9 +66,12 @@ class _StoreSearchScreenState extends State<StoreSearchScreen> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return const Center(child: Text("Loi tai du lieu"));
+            return const Center(child: Text("Lỗi tải dữ liệu"));
           }
           var data = snapshot.data ?? [];
+          final favIds =
+              Provider.of<FavoriteProvider>(context, listen: false)
+                  .favoriteStoreIds;
           if (_nearOnly && userLat != null && userLng != null) {
             data = data
                 .where((s) {
@@ -65,6 +79,9 @@ class _StoreSearchScreenState extends State<StoreSearchScreen> {
                   return d != null && d <= 5;
                 })
                 .toList();
+          }
+          if (_favOnly) {
+            data = data.where((s) => favIds.contains(s.id)).toList();
           }
 
           return Column(
@@ -76,7 +93,7 @@ class _StoreSearchScreenState extends State<StoreSearchScreen> {
                         child: Padding(
                           padding: const EdgeInsets.all(16),
                           child: Text(
-                            'Khong tim thay quan cho tu khoa "${widget.keyword}"',
+                            'Không tìm thấy quán cho từ khóa "${widget.keyword}"',
                             textAlign: TextAlign.center,
                             style: const TextStyle(color: Colors.black54),
                           ),
@@ -144,13 +161,15 @@ class _StoreSearchScreenState extends State<StoreSearchScreen> {
       padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
       child: Row(
         children: [
-          pill("Loc theo"),
+          pill("Lọc theo"),
           const SizedBox(width: 8),
-          pill("Gan toi", selected: _nearOnly, onTap: () {
+          pill("Gần tôi", selected: _nearOnly, onTap: () {
             setState(() => _nearOnly = !_nearOnly);
           }),
           const SizedBox(width: 8),
-          pill("Yeu thich"),
+          pill("Yêu thích", selected: _favOnly, onTap: () {
+            setState(() => _favOnly = !_favOnly);
+          }),
         ],
       ),
     );

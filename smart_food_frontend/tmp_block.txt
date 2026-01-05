@@ -1,0 +1,62 @@
+const SizedBox(height: 28),
+              const Text(
+                "Qu?n l? c?a h?ng",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF391713),
+                ),
+              ),
+              const SizedBox(height: 16),
+              GridView.count(
+                crossAxisCount: 4,
+                shrinkWrap: true,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  _MenuItem(
+                    icon: Icons.reviews,
+                    label: "Ph?n h?i",
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.merchantReviews);
+                    },
+                  ),
+                  _MenuItem(
+                    icon: Icons.group,
+                    label: "Nh?n vi?n",
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.employeeManage);
+                    },
+                  ),
+                  _MenuItem(
+                    icon: Icons.store_mall_directory,
+                    label: "C?a h?ng",
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.storeInfo);
+                    },
+                  ),
+                  _MenuItem(
+                    icon: Icons.campaign,
+                    label: "Qu?ng c?o",
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.storeCampaigns);
+                    },
+                  ),
+                  _MenuItem(
+                    icon: Icons.card_giftcard,
+                    label: "M? gi?m gi?",
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.storeVouchers);
+                    },
+                  ),
+                  _MenuItem(
+                    icon: Icons.bar_chart,
+                    label: "Th?ng k?",
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.merchantFinance);
+                    },
+                  ),
+                ],
+              ),
+              

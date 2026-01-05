@@ -4,8 +4,11 @@ import 'package:smart_food_frontend/core/utils/location_utils.dart';
 import 'package:smart_food_frontend/core/utils/store_badge_utils.dart';
 import 'package:smart_food_frontend/data/models/store_model.dart';
 import 'package:smart_food_frontend/data/services/store_service.dart';
+import 'package:smart_food_frontend/data/services/recommendation_service.dart';
+import 'package:smart_food_frontend/presentation/routes/app_routes.dart';
 import 'package:smart_food_frontend/presentation/widgets/store_list_item.dart';
 import 'package:smart_food_frontend/providers/address_provider.dart';
+import 'package:smart_food_frontend/providers/favorite_provider.dart';
 
 class StoreByCategoryScreen extends StatefulWidget {
   final String categoryName;
@@ -21,9 +24,18 @@ class StoreByCategoryScreen extends StatefulWidget {
 
 class _StoreByCategoryScreenState extends State<StoreByCategoryScreen> {
   bool _nearOnly = false;
+  bool _favOnly = false;
 
   Future<List<StoreModel>> _load() {
     return StoreService.fetchStoresByCategory(categoryName: widget.categoryName);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(
+      () => context.read<FavoriteProvider>().loadFavorites(),
+    );
   }
 
   @override
@@ -61,6 +73,9 @@ class _StoreByCategoryScreenState extends State<StoreByCategoryScreen> {
             return const Center(child: Text("Lỗi tải dữ liệu"));
           }
           var data = snapshot.data ?? [];
+          final favIds =
+              Provider.of<FavoriteProvider>(context, listen: false)
+                  .favoriteStoreIds;
           if (_nearOnly && userLat != null && userLng != null) {
             data = data
                 .where((s) {
@@ -68,6 +83,9 @@ class _StoreByCategoryScreenState extends State<StoreByCategoryScreen> {
                   return d != null && d <= 5;
                 })
                 .toList();
+          }
+          if (_favOnly) {
+            data = data.where((s) => favIds.contains(s.id)).toList();
           }
 
           return Column(
@@ -95,6 +113,11 @@ class _StoreByCategoryScreenState extends State<StoreByCategoryScreen> {
                             distanceKm: distance,
                             etaText: eta,
                             tags: buildStoreTags(s),
+                            onTap: () => Navigator.pushNamed(
+                              context,
+                              AppRoutes.storeDetail,
+                              arguments: s,
+                            ),
                           );
                         },
                         separatorBuilder: (_, __) => const SizedBox(height: 0),
@@ -123,14 +146,21 @@ class _StoreByCategoryScreenState extends State<StoreByCategoryScreen> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(label,
-                  style: const TextStyle(
-                      color: Colors.black87, fontWeight: FontWeight.w600)),
+              Text(
+                label,
+                style: const TextStyle(
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               if (label == "Lọc theo")
                 const Padding(
                   padding: EdgeInsets.only(left: 4),
-                  child: Icon(Icons.keyboard_arrow_down,
-                      size: 16, color: Colors.black54),
+                  child: Icon(
+                    Icons.keyboard_arrow_down,
+                    size: 16,
+                    color: Colors.black54,
+                  ),
                 ),
             ],
           ),
@@ -148,10 +178,11 @@ class _StoreByCategoryScreenState extends State<StoreByCategoryScreen> {
             setState(() => _nearOnly = !_nearOnly);
           }),
           const SizedBox(width: 8),
-          pill("Yêu thích"),
+          pill("Yêu thích", selected: _favOnly, onTap: () {
+            setState(() => _favOnly = !_favOnly);
+          }),
         ],
       ),
     );
   }
 }
-

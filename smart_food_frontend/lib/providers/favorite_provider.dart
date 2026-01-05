@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:smart_food_frontend/data/models/favorite_store_model.dart';
 import 'package:smart_food_frontend/data/services/favorite_service.dart';
+import 'package:smart_food_frontend/data/services/recommendation_service.dart';
 
 class FavoriteProvider with ChangeNotifier {
   final List<FavoriteStoreModel> _favorites = [];
@@ -31,6 +32,10 @@ class FavoriteProvider with ChangeNotifier {
       if (!isFavorite(storeId)) {
         _favorites.add(FavoriteStoreModel(id: 0, storeId: storeId));
       }
+      RecommendationService.logEvent(
+        storeId: storeId,
+        event: "store_favorite",
+      );
     } else {
       _favorites.removeWhere((f) => f.storeId == storeId);
     }

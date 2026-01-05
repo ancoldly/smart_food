@@ -13,7 +13,9 @@ import 'package:smart_food_frontend/presentation/widgets/home/home_popular_categ
 import 'package:smart_food_frontend/presentation/widgets/home/home_store_sections.dart';
 import 'package:smart_food_frontend/providers/address_provider.dart';
 import 'package:smart_food_frontend/providers/store_provider.dart';
+import 'package:smart_food_frontend/providers/notification_provider.dart';
 import 'package:smart_food_frontend/providers/user_provider.dart';
+import 'package:smart_food_frontend/data/services/recommendation_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentBanner = 0;
   final TextEditingController _searchController = TextEditingController();
   final Set<int> _loggedCampaignImpressions = {};
+  int _unread = 0;
 
   final List<Map<String, String>> popularCats = const [
     {"title": "Trà sữa", "key": "Trà sữa", "image": "assets/categories/Milk_Tea.png"},
@@ -47,11 +50,14 @@ class _HomeScreenState extends State<HomeScreen> {
       final store = Provider.of<StoreProvider>(context, listen: false);
       final userP = Provider.of<UserProvider>(context, listen: false);
       final addressP = Provider.of<AddressProvider>(context, listen: false);
+      final notifP = Provider.of<NotificationProvider>(context, listen: false);
       await Future.wait([
         store.loadStoresPublic(),
         userP.loadUserProfile(),
         addressP.loadAddresses(),
+        notifP.refreshUnreadCount(),
       ]);
+      _unread = notifP.unreadCount;
       if (mounted) setState(() {});
     });
   }
@@ -61,6 +67,17 @@ class _HomeScreenState extends State<HomeScreen> {
     _pageController.dispose();
     _searchController.dispose();
     super.dispose();
+  }
+
+  Future<void> _refreshUnread() async {
+    final notifP = Provider.of<NotificationProvider>(context, listen: false);
+    await notifP.refreshUnreadCount();
+    if (mounted) setState(() => _unread = notifP.unreadCount);
+  }
+
+  Future<void> _openNotifications() async {
+    await Navigator.pushNamed(context, AppRoutes.userNotifications);
+    await _refreshUnread();
   }
 
   @override
@@ -108,6 +125,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     searchController: _searchController,
                     onSearchSubmitted: _onSearchSubmitted,
                     onSearchTap: _goToSearchPage,
+                    onNotificationTap: _openNotifications,
+                    unreadCount: _unread,
                   ),
                   Expanded(
                     child: HomeNoLocation(
@@ -125,16 +144,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
             return CustomScrollView(
               slivers: [
-                SliverToBoxAdapter(
-                  child: HomeHeader(
-                    user: user,
-                    addresses: addresses,
-                    defaultAddress: defaultAddress,
-                    searchController: _searchController,
-                    onSearchSubmitted: _onSearchSubmitted,
-                    onSearchTap: _goToSearchPage,
-                  ),
+              SliverToBoxAdapter(
+                child: HomeHeader(
+                  user: user,
+                  addresses: addresses,
+                  defaultAddress: defaultAddress,
+                  searchController: _searchController,
+                  onSearchSubmitted: _onSearchSubmitted,
+                  onSearchTap: _goToSearchPage,
+                  onNotificationTap: _openNotifications,
+                  unreadCount: _unread,
                 ),
+              ),
                 if (!hasLocation) SliverToBoxAdapter(child: _locationNotice()),
                 SliverToBoxAdapter(
                   child: HomeBanner(

@@ -5,6 +5,7 @@ import 'package:smart_food_frontend/presentation/routes/app_routes.dart';
 import 'package:smart_food_frontend/presentation/widgets/item_profile.dart'
     as item_profile;
 import 'package:smart_food_frontend/providers/auth_provider.dart';
+import 'package:smart_food_frontend/providers/shipper_provider.dart';
 import 'package:smart_food_frontend/providers/store_provider.dart';
 import 'package:smart_food_frontend/providers/user_provider.dart';
 
@@ -17,7 +18,7 @@ class ProfileScreen extends StatelessWidget {
     if (!context.mounted) return;
     Navigator.pushReplacementNamed(context, AppRoutes.login);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Đã đăng xuất")),
+      const SnackBar(content: Text("Đăng xuất thành công")),
     );
   }
 
@@ -38,7 +39,7 @@ class ProfileScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Text(
-                  "Bạn chắc chắn chứ?",
+                  "Bạn chắc chứ?",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
@@ -237,10 +238,49 @@ class ProfileScreen extends StatelessWidget {
                       iconColor: Color(0xFFFB4A59),
                     ),
                   ),
-                  const item_profile.MenuItemWidget(
-                    label: "Dành cho tài xế",
-                    icon: Icons.motorcycle_outlined,
-                    iconColor: Color(0xFFF06A03),
+                  InkWell(
+                    onTap: () async {
+                      final shipperProvider =
+                          Provider.of<ShipperProvider>(context, listen: false);
+                      final data = await shipperProvider.fetchMe();
+                      final status = data?["status"] as int?;
+
+                      if (data == null) {
+                        if (!context.mounted) return;
+                        Navigator.pushNamed(context, AppRoutes.shipperRegister);
+                        return;
+                      }
+
+                      if (status == 1) {
+                        if (!context.mounted) return;
+                        Navigator.pushNamed(context, AppRoutes.shipperPending);
+                        return;
+                      }
+
+                      if (status == 2) {
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                                "Bạn đã được duyệt làm tài xế, hãy chờ phân công chuyến."),
+                          ),
+                        );
+                        return;
+                      }
+
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                              "Hồ sơ tài xế của bạn đang bị từ chối/khóa. Vui lòng liên hệ hỗ trợ."),
+                        ),
+                      );
+                    },
+                    child: const item_profile.MenuItemWidget(
+                      label: "Dành cho tài xế",
+                      icon: Icons.motorcycle_outlined,
+                      iconColor: Color(0xFFF06A03),
+                    ),
                   ),
                   InkWell(
                     onTap: () =>

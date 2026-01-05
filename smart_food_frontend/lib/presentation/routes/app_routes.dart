@@ -1,11 +1,9 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 // admin
-import 'package:smart_food_frontend/presentation/screens/admin/categories_page.dart';
 import 'package:smart_food_frontend/presentation/screens/admin/dashboard_page.dart';
 import 'package:smart_food_frontend/presentation/screens/admin/merchants_all_page.dart';
 import 'package:smart_food_frontend/presentation/screens/admin/merchants_pending_page.dart';
-import 'package:smart_food_frontend/presentation/screens/admin/orders_page.dart';
 import 'package:smart_food_frontend/presentation/screens/admin/shippers_all_page.dart';
 import 'package:smart_food_frontend/presentation/screens/admin/shippers_pending_page.dart';
 import 'package:smart_food_frontend/presentation/screens/admin/users_page.dart';
@@ -37,7 +35,11 @@ import 'package:smart_food_frontend/presentation/screens/client/store_info_detai
 import 'package:smart_food_frontend/presentation/screens/client/search_input_screen.dart';
 import 'package:smart_food_frontend/presentation/screens/client/voucher_wallet_screen.dart';
 import 'package:smart_food_frontend/presentation/screens/client/voucher_detail_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/client/product_detail_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/client/store_reviews_screen.dart';
 import 'package:smart_food_frontend/presentation/screens/client/store_voucher_detail_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/client/checkout_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/client/order_tracking_screen.dart';
 
 // merchant
 import 'package:smart_food_frontend/presentation/screens/merchant/add_category_screen.dart';
@@ -75,6 +77,27 @@ import 'package:smart_food_frontend/presentation/screens/merchant/template_optio
 import 'package:smart_food_frontend/presentation/screens/merchant/terms_business_screen.dart';
 import 'package:smart_food_frontend/presentation/screens/merchant/terms_personal_screen.dart';
 import 'package:smart_food_frontend/presentation/screens/merchant/store_tags_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/shipper/shipper_register_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/shipper/shipper_pending_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/shipper/shipper_home_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/shipper/shipper_wallet_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/shipper/shipper_topup_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/shipper/shipper_withdraw_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/shipper/shipper_earnings_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/shipper/shipper_leaderboard_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/shipper/shipper_support_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/shipper/shipper_profile_edit_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/shipper/shipper_notifications_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/merchant/notifications_screen.dart' as MerchantNotif;
+import 'package:smart_food_frontend/presentation/screens/client/notifications_screen.dart'
+    as ClientNotif;
+import 'package:smart_food_frontend/presentation/screens/shipper/shipper_history_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/merchant/merchant_topup_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/merchant/merchant_withdraw_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/merchant/merchant_finance_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/merchant/merchant_reviews_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/client/order_detail_screen.dart';
+import 'package:smart_food_frontend/presentation/screens/client/review_order_screen.dart';
 
 class AppRoutes {
   static const String splash = "/splash";
@@ -99,6 +122,10 @@ class AppRoutes {
   static const String storeNearby = "/store_nearby";
   static const String storeDetail = "/store_detail";
   static const String storeInfoDetail = "/store_info_detail";
+  static const String productDetail = "/product_detail";
+  static const String checkout = "/checkout";
+  static const String storeReviews = "/store_reviews";
+  static const String orderTracking = "/order_tracking";
 
   static const String onStepZero = "/on_step_zero";
   static const String onStepOne = "/on_step_one";
@@ -111,6 +138,9 @@ class AppRoutes {
   static const String storeCampaigns = "/store_campaigns";
   static const String storeVouchers = "/store_vouchers";
   static const String settlement = "/settlement";
+  static const String merchantFinance = "/merchant_finance";
+  static const String merchantReviews = "/merchant_reviews";
+  static const String reviewOrder = "/review_order";
   static const String withdraw = "/withdraw";
   static const String editStore = "/edit_store";
   static const String employeeManage = "/employee_manage";
@@ -147,12 +177,26 @@ class AppRoutes {
   static const String merchantsPending = "/admin_merchants_pending";
   static const String shippersAll = "/admin_shippers_all";
   static const String shippersPending = "/admin_shippers_pending";
-  static const String ordersPage = "/admin_orders_page";
-  static const String categoriesPage = "/admin_categories_page";
   static const String vouchersPage = "/admin_vouchers_page";
   static const String voucherWallet = "/voucher_wallet";
   static const String voucherDetail = "/voucher_detail";
   static const String storeVoucherDetail = "/store_voucher_detail";
+  static const String shipperRegister = "/shipper_register";
+  static const String shipperPending = "/shipper_pending";
+  static const String shipperHome = "/shipper_home";
+  static const String shipperWallet = "/shipper_wallet";
+  static const String shipperTopup = "/shipper_topup";
+  static const String shipperWithdraw = "/shipper_withdraw";
+  static const String shipperEarnings = "/shipper_earnings";
+  static const String shipperLeaderboard = "/shipper_leaderboard";
+  static const String shipperSupport = "/shipper_support";
+  static const String shipperProfileEdit = "/shipper_profile_edit";
+  static const String shipperHistory = "/shipper_history";
+  static const String shipperNotifications = "/shipper_notifications";
+  static const String merchantTopup = "/merchant_topup";
+  static const String merchantWithdraw = "/merchant_withdraw";
+  static const String orderDetail = "/order_detail";
+  static const String userNotifications = "/notifications";
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -222,6 +266,30 @@ class AppRoutes {
             etaText: argsInfo["etaText"] as String?,
           ),
         );
+      case storeReviews:
+        final argsReview = settings.arguments as Map<String, dynamic>? ?? {};
+        final storeId =
+            argsReview["storeId"] as int? ?? argsReview["store_id"] as int? ?? 0;
+        final storeName =
+            argsReview["storeName"] as String? ?? argsReview["store_name"] as String? ?? "";
+        return MaterialPageRoute(
+          builder: (_) => StoreReviewsScreen(
+            storeId: storeId,
+            storeName: storeName.isNotEmpty ? storeName : "Cửa hàng",
+          ),
+        );
+      case productDetail:
+        return MaterialPageRoute(
+          builder: (_) => ProductDetailScreen(
+            product: settings.arguments as dynamic,
+          ),
+        );
+      case checkout:
+        return MaterialPageRoute(
+          builder: (_) => CheckoutScreen(
+            store: settings.arguments as dynamic,
+          ),
+        );
       case helpCenter:
         return MaterialPageRoute(builder: (_) => const HelpCenterScreen());
 
@@ -253,6 +321,14 @@ class AppRoutes {
       case settlement:
         return MaterialPageRoute(
           builder: (_) => const SettlementScreen(),
+        );
+      case merchantFinance:
+        return MaterialPageRoute(
+          builder: (_) => const MerchantFinanceScreen(),
+        );
+      case merchantReviews:
+        return MaterialPageRoute(
+          builder: (_) => const MerchantReviewsScreen(),
         );
       case withdraw:
         return MaterialPageRoute(
@@ -409,10 +485,6 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const MerchantsPendingPage());
       case shippersPending:
         return MaterialPageRoute(builder: (_) => const ShippersPendingPage());
-      case ordersPage:
-        return MaterialPageRoute(builder: (_) => const OrdersPage());
-      case categoriesPage:
-        return MaterialPageRoute(builder: (_) => const CategoriesPage());
       case vouchersPage:
         return MaterialPageRoute(builder: (_) => const VouchersPage());
       case voucherWallet:
@@ -428,6 +500,78 @@ class AppRoutes {
           builder: (_) => StoreVoucherDetailScreen(
             voucher: settings.arguments as dynamic,
           ),
+        );
+      case shipperRegister:
+        return MaterialPageRoute(
+          builder: (_) => const ShipperRegisterScreen(),
+        );
+      case shipperPending:
+        return MaterialPageRoute(
+          builder: (_) => const ShipperPendingScreen(),
+        );
+      case shipperHome:
+        return MaterialPageRoute(
+          builder: (_) => const ShipperHomeScreen(),
+        );
+      case shipperWallet:
+        return MaterialPageRoute(
+          builder: (_) => const ShipperWalletScreen(),
+        );
+      case shipperTopup:
+        return MaterialPageRoute(
+          builder: (_) => const ShipperTopupScreen(),
+        );
+      case shipperWithdraw:
+        return MaterialPageRoute(
+          builder: (_) => const ShipperWithdrawScreen(),
+        );
+      case shipperEarnings:
+        return MaterialPageRoute(
+          builder: (_) => const ShipperEarningsScreen(),
+        );
+      case shipperLeaderboard:
+        return MaterialPageRoute(
+          builder: (_) => const ShipperLeaderboardScreen(),
+        );
+      case shipperSupport:
+        return MaterialPageRoute(
+          builder: (_) => const ShipperSupportScreen(),
+        );
+      case shipperProfileEdit:
+        return MaterialPageRoute(
+          builder: (_) => const ShipperProfileEditScreen(),
+        );
+      case shipperNotifications:
+        return MaterialPageRoute(
+          builder: (_) => const ShipperNotificationsScreen(),
+        );
+      case userNotifications:
+        return MaterialPageRoute(
+          builder: (_) => const ClientNotif.ClientNotificationsScreen(),
+        );
+      case shipperHistory:
+        return MaterialPageRoute(
+          builder: (_) => const ShipperHistoryScreen(),
+        );
+      case merchantTopup:
+        return MaterialPageRoute(
+          builder: (_) => const MerchantTopupScreen(),
+        );
+      case merchantWithdraw:
+        return MaterialPageRoute(
+          builder: (_) => const MerchantWithdrawScreen(),
+        );
+      case orderDetail:
+        return MaterialPageRoute(
+          builder: (_) => OrderDetailScreen(order: settings.arguments as dynamic),
+        );
+      case orderTracking:
+        return MaterialPageRoute(
+          builder: (_) => OrderTrackingScreen(order: settings.arguments as dynamic),
+        );
+      case reviewOrder:
+        return MaterialPageRoute(
+          builder: (_) => ReviewOrderScreen(order: settings.arguments as dynamic),
         );
 
       default:

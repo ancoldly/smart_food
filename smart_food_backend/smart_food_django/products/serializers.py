@@ -13,6 +13,7 @@ from .models import (
 class ProductSerializer(serializers.ModelSerializer):
     image = serializers.ImageField(required=False)
     image_url = serializers.SerializerMethodField()
+    sold_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -26,6 +27,12 @@ class ProductSerializer(serializers.ModelSerializer):
         if obj.image:
             return obj.image.url
         return None
+
+    def get_sold_count(self, obj):
+        try:
+            return obj.order_items.filter(order__status="completed").count()
+        except Exception:
+            return 0
 
 
 class OptionSerializer(serializers.ModelSerializer):

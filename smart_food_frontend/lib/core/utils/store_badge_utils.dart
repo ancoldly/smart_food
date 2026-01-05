@@ -51,9 +51,9 @@ String? _voucherTag(StoreModel store) {
     }
   }
   active ??= list.first;
-  if (!(active?.isActive ?? false)) return null;
+  if (!(active.isActive)) return null;
   final title =
-      (active?.description.isNotEmpty ?? false) ? active!.description : "Mã giảm giá";
+      (active.description.isNotEmpty) ? active.description : "Mã giảm giá";
   return _trim(title, 18);
 }
 

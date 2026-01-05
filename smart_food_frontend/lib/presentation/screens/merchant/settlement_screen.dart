@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_food_frontend/data/models/payment_model.dart';
+import 'package:smart_food_frontend/providers/earnings_provider.dart';
 import 'package:smart_food_frontend/providers/payment_provider.dart';
 import 'package:smart_food_frontend/presentation/routes/app_routes.dart';
 
@@ -16,13 +17,15 @@ class _SettlementScreenState extends State<SettlementScreen> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      Provider.of<PaymentProvider>(context, listen: false).loadPayments();
+      context.read<PaymentProvider>().loadPayments();
+      context.read<EarningsProvider>().fetchMerchant();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final paymentP = Provider.of<PaymentProvider>(context);
+    final paymentP = context.watch<PaymentProvider>();
+    final earnings = context.watch<EarningsProvider>();
     final payments = paymentP.payments;
     final defaultAcc = payments.isEmpty
         ? null
@@ -38,7 +41,7 @@ class _SettlementScreenState extends State<SettlementScreen> {
         elevation: 0,
         centerTitle: true,
         title: const Text(
-          "Thanh toán & đối soát",
+          "Thanh toán & Đối soát",
           style: TextStyle(
             color: Color(0xFF391713),
             fontWeight: FontWeight.w700,
@@ -54,27 +57,67 @@ class _SettlementScreenState extends State<SettlementScreen> {
             _summaryCard(context),
             const SizedBox(height: 16),
             _sectionTitle("Tài khoản nhận tiền"),
+            const SizedBox(height: 8),
             if (defaultAcc != null)
               _bankBox(context, defaultAcc)
             else
               _emptyBank(context),
-            const SizedBox(height: 16),
-            _sectionTitle("Phương thức thanh toán"),
-            _accountList(payments),
-            const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: () => Navigator.pushNamed(context, AppRoutes.payment),
-                icon: const Icon(Icons.settings),
-                label: const Text("Quản lý phương thức thanh toán"),
-              ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, AppRoutes.merchantTopup);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF2C6B2F),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Text(
+                      "Nạp tiền",
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, AppRoutes.merchantWithdraw);
+                    },
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Color(0xFF2C6B2F)),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Text(
+                      "Rút tiền",
+                      style: TextStyle(color: Color(0xFF2C6B2F), fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 16),
-            _sectionTitle("Lịch sử chuyển khoản"),
-            _historyItem("12/12/2025", "5.000.000đ", "Đã chuyển"),
-            _historyItem("05/12/2025", "3.200.000đ", "Đã chuyển"),
-            _historyItem("28/11/2025", "4.150.000đ", "Đã chuyển"),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.payment);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF2C6B2F),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                minimumSize: const Size(double.infinity, 48),
+              ),
+              child: const Text(
+                "Thêm tài khoản",
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+              ),
+            ),
+            const SizedBox(height: 24),
+            _sectionTitle("Lịch sử giao dịch"),
+            ..._historyList(context, earnings),
           ],
         ),
       ),
@@ -82,6 +125,10 @@ class _SettlementScreenState extends State<SettlementScreen> {
   }
 
   Widget _summaryCard(BuildContext context) {
+    final earnings = context.watch<EarningsProvider>();
+    final loading = earnings.loadingMerchant;
+    final total = earnings.merchantTotal;
+    final count = earnings.merchantOrderCount;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -99,7 +146,7 @@ class _SettlementScreenState extends State<SettlementScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            "Tổng kết kỳ gần nhất",
+            "Tổng kết gần nhất",
             style: TextStyle(
               fontWeight: FontWeight.w700,
               fontSize: 15,
@@ -109,50 +156,41 @@ class _SettlementScreenState extends State<SettlementScreen> {
           const SizedBox(height: 12),
           Row(
             children: [
-              _summaryTile("Doanh thu dự kiến", "8.350.000đ",
-                  icon: Icons.payments, color: const Color(0xFF2C6B2F)),
+              _summaryTile(
+                  "Doanh thu hoàn thành",
+                  loading ? "..." : "${total.toStringAsFixed(0)}đ",
+                  icon: Icons.payments,
+                  color: const Color(0xFF2C6B2F)),
               const SizedBox(width: 10),
-              _summaryTile("Phí nền tảng", "350.000đ",
-                  icon: Icons.receipt_long, color: const Color(0xFF9A1B1D)),
+              _summaryTile(
+                  "Số đơn hoàn thành",
+                  loading ? "..." : "$count đơn",
+                  icon: Icons.receipt_long,
+                  color: const Color(0xFF9A1B1D)),
             ],
           ),
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(
-                child: _summaryTile("Số dư khả dụng", "8.000.000đ",
-                    icon: Icons.account_balance_wallet,
-                    color: const Color(0xFF391713)),
-              ),
+              _summaryTile("Đang xử lý", "0đ",
+                  icon: Icons.hourglass_bottom, color: const Color(0xFF5B7B56)),
               const SizedBox(width: 10),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1F7A52),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                ),
-                onPressed: () => Navigator.pushNamed(context, "/withdraw"),
-                child: const Text(
-                  "Yêu cầu rút",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
+              _summaryTile("Khác", "0đ",
+                  icon: Icons.more_horiz, color: const Color(0xFF9A6B00)),
             ],
-          )
+          ),
         ],
       ),
     );
   }
 
   Widget _summaryTile(String title, String value,
-      {required IconData icon, required Color color}) {
+      {IconData? icon, Color? color}) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.08),
+          color: const Color(0xFFFFF5E8),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -160,29 +198,27 @@ class _SettlementScreenState extends State<SettlementScreen> {
           children: [
             Row(
               children: [
-                Icon(icon, color: color, size: 18),
+                Icon(icon ?? Icons.star, size: 18, color: color ?? Colors.brown),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
                     title,
-                    style: TextStyle(
-                      color: color,
+                    style: const TextStyle(
+                      fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      fontSize: 12,
+                      color: Color(0xFF391713),
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 10),
             Text(
               value,
-              style: TextStyle(
-                color: color,
+              style: const TextStyle(
+                fontSize: 18,
                 fontWeight: FontWeight.w800,
-                fontSize: 16,
+                color: Color(0xFF2C6B2F),
               ),
             ),
           ],
@@ -191,61 +227,54 @@ class _SettlementScreenState extends State<SettlementScreen> {
     );
   }
 
-  Widget _bankBox(BuildContext context, PaymentModel acc) {
+  Widget _sectionTitle(String title) {
+    return Text(
+      title,
+      style: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w700,
+        color: Color(0xFF391713),
+      ),
+    );
+  }
+
+  Widget _bankBox(BuildContext context, PaymentModel payment) {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE8E0D7)),
       ),
       child: Row(
         children: [
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              color: const Color(0xFFE8F6FF),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(Icons.account_balance, color: Color(0xFF1565C0)),
-          ),
+          const Icon(Icons.account_balance, size: 32, color: Color(0xFF2C6B2F)),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Ngân hàng: ${acc.bankName}",
+                  payment.bankName,
                   style: const TextStyle(
                     fontWeight: FontWeight.w700,
-                    color: Color(0xFF391713),
+                    fontSize: 15,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  "Số tài khoản: ${acc.accountNumber}",
-                  style: const TextStyle(color: Colors.black87, fontSize: 13),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  "Chủ TK: ${acc.accountHolder}",
-                  style: const TextStyle(color: Colors.black54, fontSize: 12),
+                  payment.accountNumber,
+                  style: const TextStyle(color: Colors.black54),
                 ),
               ],
             ),
           ),
           TextButton(
-            onPressed: () => Navigator.pushNamed(context, AppRoutes.payment),
-            child: const Text("Cập nhật"),
-          )
+            onPressed: () {
+              Navigator.pushNamed(context, AppRoutes.payment);
+            },
+            child: const Text("Chỉnh sửa"),
+          ),
         ],
       ),
     );
@@ -253,172 +282,58 @@ class _SettlementScreenState extends State<SettlementScreen> {
 
   Widget _emptyBank(BuildContext context) {
     return Container(
-      width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.account_balance, color: Colors.grey),
-          const SizedBox(width: 10),
-          const Expanded(
-            child: Text(
-              "Chưa có tài khoản nhận tiền. Thêm phương thức thanh toán trước.",
-              style: TextStyle(color: Colors.black87),
-            ),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pushNamed(context, AppRoutes.payment),
-            child: const Text("Thêm"),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _accountList(List<PaymentModel> payments) {
-    if (payments.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 8),
-        child: Text(
-          "Chưa có phương thức thanh toán.",
-          style: TextStyle(color: Colors.black54),
-        ),
-      );
-    }
-    return Column(
-      children: payments
-          .map(
-            (p) => Container(
-              margin: const EdgeInsets.only(top: 8),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
-                    blurRadius: 6,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFF2E5),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      p.isDefault ? "Mặc định" : "Phụ",
-                      style: const TextStyle(
-                          color: Color(0xFF9A1B1D),
-                          fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          p.bankName,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF391713)),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          p.accountNumber,
-                          style: const TextStyle(color: Colors.black87),
-                        ),
-                        Text(
-                          p.accountHolder,
-                          style: const TextStyle(
-                              color: Colors.black54, fontSize: 12),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          )
-          .toList(),
-    );
-  }
-
-  Widget _historyItem(String date, String amount, String status) {
-    return Container(
-      margin: const EdgeInsets.only(top: 8),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
-          ),
-        ],
+        border: Border.all(color: const Color(0xFFE8E0D7)),
       ),
-      child: Row(
+      child: const Row(
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFF2E5),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              date,
-              style: const TextStyle(
-                color: Color(0xFF9A1B1D),
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
+          Icon(Icons.info_outline, color: Color(0xFF9A6B00)),
+          SizedBox(width: 10),
           Expanded(
             child: Text(
-              amount,
-              style: const TextStyle(
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF391713),
-              ),
+              "Chưa có tài khoản nhận tiền, hãy thêm ngay.",
+              style: TextStyle(color: Color(0xFF391713)),
             ),
           ),
-          Text(
-            status,
-            style:
-                const TextStyle(color: Colors.green, fontWeight: FontWeight.w600),
-          )
         ],
       ),
     );
   }
+  List<Widget> _historyList(BuildContext context, EarningsProvider earnings) {
+    if (earnings.merchantTransactions.isEmpty) {
+      return [const Text("Chưa có giao dịch", style: TextStyle(color: Colors.black54))];
+    }
+    return earnings.merchantTransactions.map((tx) {
+      final amount = (tx["amount"] as num?)?.toDouble() ?? 0;
+      final note = tx["note"]?.toString() ?? "";
+      final created = tx["created_at"]?.toString() ?? "";
+      final isPositive = amount >= 0;
+      final money = "${isPositive ? '+' : '-'}${amount.abs().toStringAsFixed(0)}đ";
+      final title = note.isNotEmpty ? note : (isPositive ? "Nhận tiền" : "Trả tiền");
+      return _historyItem(created, money, title, isPositive: isPositive);
+    }).toList();
+  }
 
-  Widget _sectionTitle(String text) {
-    return Text(
-      text,
-      style: const TextStyle(
-        fontWeight: FontWeight.w700,
-        fontSize: 15,
-        color: Color(0xFF391713),
+  Widget _historyItem(String date, String amount, String status, {bool isPositive = true}) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: Icon(
+        isPositive ? Icons.call_received : Icons.call_made,
+        color: isPositive ? const Color(0xFF2C6B2F) : const Color(0xFFE55C52),
+      ),
+      title: Text(
+        amount,
+        style: const TextStyle(fontWeight: FontWeight.w700),
+      ),
+      subtitle: Text(status),
+      trailing: Text(
+        date,
+        style: const TextStyle(color: Colors.black54),
       ),
     );
   }
+
 }

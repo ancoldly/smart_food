@@ -17,6 +17,7 @@ class ProductModel {
 
   final String createdAt;
   final String updatedAt;
+  final int soldCount;
 
   ProductModel({
     required this.id,
@@ -32,6 +33,7 @@ class ProductModel {
     required this.position,
     required this.createdAt,
     required this.updatedAt,
+    this.soldCount = 0,
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
@@ -63,6 +65,7 @@ class ProductModel {
       position: _toInt(json["position"]),
       createdAt: json["created_at"] ?? "",
       updatedAt: json["updated_at"] ?? "",
+      soldCount: _toInt(json["sold_count"]),
     );
   }
 
@@ -81,6 +84,7 @@ class ProductModel {
       "position": position,
       "created_at": createdAt,
       "updated_at": updatedAt,
+      "sold_count": soldCount,
     };
   }
 }
