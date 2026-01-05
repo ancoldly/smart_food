@@ -169,7 +169,6 @@ Payment flows are demo only and not integrated with real payment gateways. Do no
 
 🖼 Screenshots / UI mockups
 ---
-## Screenshots / UI mockups
 
 <!-- Row 1: User core screens -->
 <p align="center">
